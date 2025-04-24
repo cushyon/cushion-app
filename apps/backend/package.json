@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/index.ts",
+    "dev": "nodemon",
     "build": "tsc",
     "start": "node dist/index.js"
   },
@@ -12,12 +12,20 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@repo/database": "workspace:*",
+    "@solana/spl-token": "^0.4.13",
+    "@solana/web3.js": "^1.98.1",
+    "axios": "^1.8.4",
+    "bs58": "^6.0.0",
     "express": "^5.1.0",
-    "@repo/database": "workspace:*"
+    "node-cron": "^3.0.3",
+    "zod": "^3.24.3"
   },
   "devDependencies": {
     "@types/express": "^5.0.1",
     "@types/node": "^20.11.24",
+    "@types/node-cron": "^3.0.11",
+    "dotenv": "^16.5.0",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "typescript": "5.5.4"

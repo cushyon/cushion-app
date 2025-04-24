@@ -1,0 +1,9 @@
+{
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ext": "ts,json",
+  "ignore": ["src/**/*.spec.ts"],
+  "watch": ["src"],
+  "exec": "ts-node -r dotenv/config src/index.ts"
+}
