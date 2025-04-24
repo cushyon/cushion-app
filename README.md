@@ -57,6 +57,22 @@ Start the MySQL database using Docker Compose:
 docker-compose up -d
 ```
 
+If you dont want to use docker compose and directly use railway for exemple
+
+update env with your db url
+
+then run
+
+```
+pnpm generate
+```
+
+if you dont have any migration
+
+```
+pnpm db:migrate:dev "init"
+```
+
 To change the default database name, update the `MYSQL_DATABASE` environment variable in the [`docker-compose.yml` file](/docker-compose.yml).
 
 ### 3. Setup environment variables
