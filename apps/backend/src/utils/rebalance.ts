@@ -1,13 +1,11 @@
 import axios from "axios";
-import {
-  PublicKey,
-  Connection,
-  Keypair,
-  VersionedTransaction,
-} from "@solana/web3.js";
-import { getAssociatedTokenAddress } from "@solana/spl-token";
-import { getTokenAccountBalance } from "./get-token-account-balance";
+import { PublicKey, Connection, Keypair } from "@solana/web3.js";
 import bs58 from "bs58";
+import { fetchJupiterTokenPrice } from "./jupiter-get-price";
+import { getCurrentBalanceInUSD } from "./get-balance-in-usd";
+import { getTokenAccountData } from "./get-token-account-data";
+import { swap } from "./swap";
+
 export const USDC = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 export const BTC = "3NZ9JMVBmGAqocybic2c7LQCJScmgsAZ6vQqTDzcqmJh";
 export const SOL = "So11111111111111111111111111111111111111112";
@@ -23,20 +21,6 @@ const PUBLIC_KEY = "8JJCtexL5QTc4jnLztHNT4dKLSNhswuYwmR4gVvJZwAh";
 // Connection à la blockchain Solana (mainnet)
 const connection = new Connection("https://api.mainnet-beta.solana.com");
 
-async function getTokenAccount(
-  mintAddress: PublicKey,
-  userPublicKey: PublicKey
-) {
-  const ata = await getAssociatedTokenAddress(
-    mintAddress,
-    userPublicKey,
-    false
-  );
-
-  console.log("Associated Token Account:", ata.toBase58());
-  return ata;
-}
-
 export const getBalance = async (address: string) => {
   try {
     const publicKey = new PublicKey(address);
@@ -49,84 +33,120 @@ export const getBalance = async (address: string) => {
   }
 };
 
-export const rebalance = async () => {
+export const getAmountInUSD = async (
+  tokenMint: string,
+  amountToken: number
+) => {
+  const price = await fetchJupiterTokenPrice(tokenMint);
+  return Number(price) * amountToken;
+};
+
+export const rebalance = async ({
+  percentageAsset1,
+  percentageAsset2,
+}: {
+  percentageAsset1: number;
+  percentageAsset2: number;
+}) => {
   const adminWallet = Keypair.fromSecretKey(
     bs58.decode(process.env.WALLET_PRIVATE_KEY as string)
   );
-  const balance1 = await getBalance(PUBLIC_KEY);
-  const balanceInLamports = balance1 * 1_000_000_000;
+  const amountAsset1InUSd = await getCurrentBalanceInUSD(ASSET1, PUBLIC_KEY);
+  const amountInUSD2 = await getCurrentBalanceInUSD(ASSET2, PUBLIC_KEY);
 
-  console.log("adminWallet", adminWallet);
-  console.log("balance1", balance1);
-  console.log("balanceInLamports", balanceInLamports);
+  const totalAmountInUSD = amountAsset1InUSd + amountInUSD2;
+  console.log("totalAmountInUSD", totalAmountInUSD);
 
-  const tokenAccount2 = await getTokenAccount(
-    new PublicKey(ASSET2),
-    new PublicKey(PUBLIC_KEY)
-  );
+  const currentPercentageAsset1 = (amountAsset1InUSd / totalAmountInUSD) * 100;
+  const currentPercentageAsset2 = (amountInUSD2 / totalAmountInUSD) * 100;
 
-  const tokenAccountBalance2 = await getTokenAccountBalance(
-    tokenAccount2.toString()
-  );
+  console.log("current percentageAsset1", currentPercentageAsset1);
+  console.log("current percentageAsset2", currentPercentageAsset2);
 
-  console.log("tokenAccount2", tokenAccount2);
+  // expected amount asset1
 
-  console.log("tokenAccountBalance", tokenAccountBalance2);
+  const swapDirection =
+    currentPercentageAsset1 > percentageAsset1
+      ? "asset1ToAsset2"
+      : "asset2ToAsset1";
 
-  const amountToSwap = balanceInLamports * 0.1;
+  console.log("swapDirection", swapDirection);
 
-  console.log("amountToSwap", amountToSwap);
+  console.log("percentageAsset1", percentageAsset1);
+  console.log("percentageAsset2", percentageAsset2);
 
-  const quoteResponse = await axios.get(
-    `https://lite-api.jup.ag/swap/v1/quote?inputMint=${ASSET1}&outputMint=${ASSET2}&amount=${amountToSwap}&slippageBps=50&restrictIntermediateTokens=true`
-  );
+  const expectedAmountAsset1 = (percentageAsset1 / 100) * totalAmountInUSD;
+  const expectedAmountAsset2 = (percentageAsset2 / 100) * totalAmountInUSD;
 
-  console.log("quoteResponse", quoteResponse.data);
+  console.log("expectedAmountAsset1", expectedAmountAsset1);
+  console.log("expectedAmountAsset2", expectedAmountAsset2);
 
-  interface SwapResponse {
-    swapTransaction: string;
-    lastValidBlockHeight: number;
-    priorityFeeEstimate: number;
-  }
+  if (swapDirection === "asset1ToAsset2") {
+    const priceAsset1 = await fetchJupiterTokenPrice(ASSET1);
 
-  const swapResponse = await axios.post<SwapResponse>(
-    "https://lite-api.jup.ag/swap/v1/swap",
-    {
-      quoteResponse: quoteResponse.data,
-      userPublicKey: PUBLIC_KEY.toString(),
-      dynamicComputeUnitLimit: true,
-      dynamicSlippage: true,
-      prioritizationFeeLamports: {
-        priorityLevelWithMaxLamports: {
-          maxLamports: 1000000,
-          priorityLevel: "veryHigh",
-        },
-      },
-    },
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
+    if (ASSET1 === SOL) {
+      const balance = await connection.getBalance(new PublicKey(PUBLIC_KEY));
+      const amountExpectedAsset1 = Number(
+        ((expectedAmountAsset1 / Number(priceAsset1)) * 1_000_000_000).toFixed(
+          0
+        )
+      );
+
+      console.log("current balance", balance);
+      console.log("amountExpectedAsset1", amountExpectedAsset1);
+
+      const amountToSwap = balance - amountExpectedAsset1;
+
+      console.log("amount to swap", amountToSwap);
+
+      // => swap function
+      const signature = await swap(ASSET1, ASSET2, amountToSwap);
+      console.log("signature", signature);
+    } else {
+      const priceAsset1 = await fetchJupiterTokenPrice(ASSET1);
+      const tokenAccountData = await getTokenAccountData(ASSET1, PUBLIC_KEY);
+      const amountExpectedAsset1 = Number(
+        (
+          (expectedAmountAsset1 / Number(priceAsset1)) *
+          10 ** Number(tokenAccountData.result.value.decimals)
+        ).toFixed(0)
+      );
+
+      console.log(
+        "current amount asset2",
+        tokenAccountData.result.value.amount
+      );
+      console.log("amount expected asset1", amountExpectedAsset1);
+
+      const amountToSwap =
+        Number(tokenAccountData.result.value.amount) - amountExpectedAsset1;
+
+      console.log("amount to swap", amountToSwap);
+
+      // => swap function
+      const signature = await swap(ASSET1, ASSET2, amountToSwap);
+      console.log("signature", signature);
     }
-  );
+  } else {
+    const priceAsset2 = await fetchJupiterTokenPrice(ASSET2);
+    const tokenAccountData = await getTokenAccountData(ASSET2, PUBLIC_KEY);
+    const amountExpectedAsset2 = Number(
+      (
+        (expectedAmountAsset2 / Number(priceAsset2)) *
+        10 ** Number(tokenAccountData.result.value.decimals)
+      ).toFixed(0)
+    );
 
-  console.log("swapResponse", swapResponse.data);
+    console.log("current amount asset2", tokenAccountData.result.value.amount);
+    console.log("amount expected asset2", amountExpectedAsset2);
 
-  const transactionBase64 = swapResponse.data.swapTransaction;
-  const transaction = VersionedTransaction.deserialize(
-    Buffer.from(transactionBase64, "base64")
-  );
-  console.log("transaction", transaction);
+    const amountToSwap =
+      Number(tokenAccountData.result.value.amount) - amountExpectedAsset2;
 
-  transaction.sign([adminWallet]);
+    console.log("amount to swap", amountToSwap);
 
-  const transactionBinary = transaction.serialize();
-  console.log("transactionBinary", transactionBinary);
-
-  const signature = await connection.sendRawTransaction(transactionBinary, {
-    maxRetries: 2,
-    skipPreflight: true,
-  });
-
-  console.log("signature", signature);
+    // => swap function
+    const signature = await swap(ASSET2, ASSET1, amountToSwap);
+    console.log("signature", signature);
+  }
 };

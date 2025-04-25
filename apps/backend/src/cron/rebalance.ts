@@ -4,7 +4,10 @@ import { rebalance } from "../utils/rebalance";
 cron.schedule("0 16 * * *", async () => {
   console.log("Rebalancing...");
 
-  await rebalance();
+  await rebalance({
+    percentageAsset1: 60,
+    percentageAsset2: 40,
+  });
 
   console.log("Rebalancing completed");
 });

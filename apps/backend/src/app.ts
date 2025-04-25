@@ -4,6 +4,9 @@ import { rebalance } from "./utils/rebalance";
 
 const app: Express = express();
 
-rebalance();
+rebalance({
+  percentageAsset1: 70,
+  percentageAsset2: 30,
+});
 
 export default app;
