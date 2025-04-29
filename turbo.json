@@ -27,6 +27,18 @@
       "dependsOn": ["^generate"],
       "cache": false
     },
-    "lint": {}
+    "lint": {
+      "cache": false
+    },
+    "backend:dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "backend:build": {
+      "cache": false
+    },
+    "backend:start": {
+      "cache": false
+    }
   }
 }

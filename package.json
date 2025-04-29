@@ -13,7 +13,10 @@
     "dev": "turbo run dev",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "generate": "turbo run generate",
-    "lint": "turbo run lint"
+    "lint": "turbo run lint",
+    "backend:dev": "turbo run backend:dev",
+    "backend:build": "turbo run backend:build",
+    "backend:start": "turbo run backend:start"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
