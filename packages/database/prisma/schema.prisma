@@ -17,3 +17,8 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
 }
+
+model tradeexecution {
+  id  String @id @default(cuid())
+  nav Float
+}
