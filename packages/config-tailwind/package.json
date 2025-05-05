@@ -1,5 +1,5 @@
 {
-  "name": "config-tailwind",
+  "name": "@repo/config-tailwind",
   "version": "1.0.0",
   "description": "",
   "main": "tailwind.config.js",
