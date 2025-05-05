@@ -16,18 +16,27 @@ app.get("/api/get-asset-pair-price", async (req: Request, res: Response) => {
   res.json({ price });
 });
 
-app.get("/api/get-asset-quantity", async (req: Request, res: Response) => {
-  const { asset1, asset2 } = req.body;
-  const quantity = await getAssetQuantity(asset1, asset2);
-  res.json({ quantity });
-});
+app.get(
+  "/api/get-asset-quantity/:asset1/:asset2",
+  async (req: Request, res: Response) => {
+    const { asset1, asset2 } = req.params;
+    const quantity = await getAssetQuantity(asset1, asset2);
+    res.json({ quantity });
+  }
+);
 
-app.get("/price-and-quantity", async (req: Request, res: Response) => {
-  const { asset1, asset2 } = req.body;
-  const price = await getAssetPairPrice(asset1, asset2);
-  const quantity = await getAssetQuantity(asset1, asset2);
-  res.json({ price, quantity });
-});
+app.get(
+  "/price-and-quantity/:asset1/:asset2",
+  async (req: Request, res: Response) => {
+    const { asset1, asset2 } = req.params;
+    if (!asset1 || !asset2) {
+      throw new Error("Asset1 and asset2 are required");
+    }
+    const price = await getAssetPairPrice(asset1, asset2);
+    const quantity = await getAssetQuantity(asset1, asset2);
+    res.json({ price, quantity });
+  }
+);
 
 app.post("/api/rebalance", async (req: Request, res: Response) => {
   try {

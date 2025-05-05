@@ -1,10 +1,12 @@
-import { getTokenAccountBalance } from "../utils/get-token-account-balance";
+import { getTokenAccountData } from "../utils/get-token-account-data";
+
+const PUBLIC_KEY = "8JJCtexL5QTc4jnLztHNT4dKLSNhswuYwmR4gVvJZwAh";
 
 export const getAssetQuantity = async (asset1: string, asset2: string) => {
-  const tokenAccountBalance1 = await getTokenAccountBalance(asset1);
-  const tokenAccountBalance2 = await getTokenAccountBalance(asset2);
+  const tokenAccountBalance1 = await getTokenAccountData(asset1, PUBLIC_KEY);
+  const tokenAccountBalance2 = await getTokenAccountData(asset2, PUBLIC_KEY);
   return {
-    asset1: tokenAccountBalance1,
-    asset2: tokenAccountBalance2,
+    asset1: tokenAccountBalance1.result.value,
+    asset2: tokenAccountBalance2.result.value,
   };
 };
