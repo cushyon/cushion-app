@@ -23,6 +23,9 @@
       "cache": false,
       "persistent": true
     },
+    "start": {
+      "cache": false
+    },
     "generate": {
       "dependsOn": ["^generate"],
       "cache": false
