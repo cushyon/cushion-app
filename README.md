@@ -1,3 +1,15 @@
+# How does the backend works
+
+when cron executes (16h), call API node backend. 
+Fetch price of 2 assets and our portfolio.
+save NAV in DB
+call function calculating CPPI
+new quantity
+convert ot %
+Send to node backend
+execute with jupiter API
+
+
 # Turborepo + Prisma ORM starter
 
 This is a example designed to help you quickly set up a Turborepo monorepo with a Next.js app and Prisma ORM. This is a community-maintained example. If you experience a problem, please submit a pull request with a fix. GitHub Issues will be closed.
