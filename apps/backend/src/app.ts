@@ -3,6 +3,7 @@ import "./cron/rebalance";
 import { rebalance } from "./utils/rebalance";
 import { getAssetPairPrice } from "./service/get-asset-pair-price.service";
 import { getAssetQuantity } from "./service/get-asset-quantity.service";
+import { getTradeExecutionData } from "./service/get-trade-execution-data.service";
 
 const app: Express = express();
 
@@ -14,6 +15,16 @@ app.get("/api/get-asset-pair-price", async (req: Request, res: Response) => {
   const { asset1, asset2 } = req.body;
   const price = await getAssetPairPrice(asset1, asset2);
   res.json({ price });
+});
+
+app.get("/api/trade-execution-data", async (req: Request, res: Response) => {
+  const { name, risky_asset, safe_asset } = req.query;
+  const tradeExecutionData = await getTradeExecutionData(
+    name as string,
+    risky_asset as string,
+    safe_asset as string
+  );
+  res.json({ tradeExecutionData });
 });
 
 app.get(

@@ -30,6 +30,9 @@
       "dependsOn": ["^generate"],
       "cache": false
     },
+    "studio": {
+      "cache": false
+    },
     "lint": {
       "cache": false
     },
