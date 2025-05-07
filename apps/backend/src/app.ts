@@ -41,8 +41,6 @@ app.get(
 app.post("/api/rebalance", async (req: Request, res: Response) => {
   try {
     const { percentageAsset1, percentageAsset2 } = req.body;
-    if (!percentageAsset1 || !percentageAsset2)
-      throw new Error("Percentage asset1 and asset2 are required");
     if (percentageAsset1 + percentageAsset2 !== 100)
       throw new Error("Percentage asset1 and asset2 must be 100");
     await rebalance({ percentageAsset1, percentageAsset2 });
