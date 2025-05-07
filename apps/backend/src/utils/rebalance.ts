@@ -64,6 +64,11 @@ export const rebalance = async ({
   console.log("current percentageAsset1", currentPercentageAsset1);
   console.log("current percentageAsset2", currentPercentageAsset2);
 
+  if (currentPercentageAsset1 === percentageAsset1) {
+    console.log("No need to rebalance");
+    return;
+  }
+
   // expected amount asset1
 
   const swapDirection =

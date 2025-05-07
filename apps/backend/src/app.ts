@@ -4,6 +4,7 @@ import { rebalance } from "./utils/rebalance";
 import { getAssetPairPrice } from "./service/get-asset-pair-price.service";
 import { getAssetQuantity } from "./service/get-asset-quantity.service";
 import { getTradeExecutionData } from "./service/get-trade-execution-data.service";
+import { updateTradeExecutionData } from "./service/update-trade-execution-data.service";
 
 const app: Express = express();
 
@@ -52,8 +53,13 @@ app.get(
 app.post("/api/rebalance", async (req: Request, res: Response) => {
   try {
     const { percentageAsset1, percentageAsset2 } = req.body;
-    if (percentageAsset1 + percentageAsset2 !== 100)
+    console.log("percentageAsset1", percentageAsset1);
+    console.log("percentageAsset2", percentageAsset2);
+    if (percentageAsset1 + percentageAsset2 !== 100) {
+      console.log("Percentage asset1 and asset2 must be 100");
       throw new Error("Percentage asset1 and asset2 must be 100");
+    }
+
     await rebalance({ percentageAsset1, percentageAsset2 });
     res.json({ message: "Rebalance done" });
   } catch (error) {
@@ -61,6 +67,21 @@ app.post("/api/rebalance", async (req: Request, res: Response) => {
     res.status(500).json({ error: "Rebalance failed" });
   }
 });
+
+app.post(
+  "/api/update-trade-execution-data",
+  async (req: Request, res: Response) => {
+    console.log("update-trade-execution-data req.body", req.body);
+    const { id, nav, max_nav, initial_capital } = req.body;
+    const tradeExecutionData = await updateTradeExecutionData(
+      id,
+      nav,
+      max_nav,
+      initial_capital
+    );
+    res.json({ tradeExecutionData });
+  }
+);
 
 // rebalance({
 //   percentageAsset1: 70,
