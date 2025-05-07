@@ -18,7 +18,7 @@ model User {
   emailVerified DateTime?
 }
 
-model tradeexecution {
+model Tradeexecution {
   id              String @id @default(cuid())
   nav             Float
   max_nav         Float
