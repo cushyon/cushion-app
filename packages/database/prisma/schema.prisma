@@ -19,6 +19,8 @@ model User {
 }
 
 model tradeexecution {
-  id  String @id @default(cuid())
-  nav Float
+  id              String @id @default(cuid())
+  nav             Float
+  max_nav         Float
+  initial_capital Float
 }
