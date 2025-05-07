@@ -20,6 +20,9 @@ model User {
 
 model Tradeexecution {
   id              String @id @default(cuid())
+  name            String
+  risky_asset     String
+  safe_asset      String
   nav             Float
   max_nav         Float
   initial_capital Float
