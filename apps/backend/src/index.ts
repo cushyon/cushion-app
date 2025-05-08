@@ -1,4 +1,5 @@
 import app from "./app";
+import "./service/drift-service";
 
 const PORT = process.env.PORT || 4000;
 

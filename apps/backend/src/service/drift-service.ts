@@ -35,8 +35,8 @@ export const getTokenAddress = (
 };
 
 const main = async () => {
-	const env = 'devnet';
-	//const env = 'mainnet-beta';
+	//const env = 'devnet';
+	const env = 'mainnet-beta';
 
 	// Initialize Drift SDK
 	const sdkConfig = initialize({ env });
@@ -86,14 +86,24 @@ const main = async () => {
 		connection: provider.connection,
 		wallet: provider.wallet,
 		programID: driftPublicKey,
-		accountSubscription: {
-			type: 'polling',
-			accountLoader: bulkAccountLoader,
-		},
+		// accountSubscription: {
+		// 	type: 'polling',
+		// 	accountLoader: bulkAccountLoader,
+		// },
 	});
+    
 	await driftClient.subscribe();
 
 	console.log('subscribed to driftClient');
+
+    const userAccountPublicKey = await driftClient.getUserAccountPublicKey()
+    console.log("userAccount", userAccountPublicKey)
+    //console.log("bulkAccountLoader", bulkAccountLoader)
+
+    // const [txSig, userPublickKey] = await driftClient.initializeUserAccount(
+    //     0,
+    //     "toly"
+    //   );
 
 	// Set up user client
 	const user = new User({
@@ -104,7 +114,7 @@ const main = async () => {
 			accountLoader: bulkAccountLoader,
 		},
 	});
-
+    console.log('User', user);
 	//// Check if user account exists for the current wallet
 	const userAccountExists = await user.exists();
 
