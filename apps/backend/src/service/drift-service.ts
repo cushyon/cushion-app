@@ -1,6 +1,7 @@
 import * as anchor from '@coral-xyz/anchor';
 import { AnchorProvider } from '@coral-xyz/anchor';
 import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import bs58 from 'bs58';
 
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import {
@@ -22,6 +23,8 @@ import {
 	calculateBidAskPrice,
 	getMarketsAndOraclesForSubscription,
 	calculateEstimatedPerpEntryPrice,
+	getUserAccountPublicKeySync,
+	DRIFT_PROGRAM_ID
 } from '@drift-labs/sdk';
 
 export const getTokenAddress = (
@@ -35,8 +38,8 @@ export const getTokenAddress = (
 };
 
 const main = async () => {
-	//const env = 'devnet';
-	const env = 'mainnet-beta';
+	const env = 'devnet';
+	//const env = 'mainnet-beta';
 
 	// Initialize Drift SDK
 	const sdkConfig = initialize({ env });
@@ -49,6 +52,13 @@ const main = async () => {
 	if (!process.env.ANCHOR_PROVIDER_URL) {
 		throw new Error('ANCHOR_PROVIDER_URL env var must be set.');
 	}
+
+
+
+const keypairBytes = bs58.decode(process.env.WALLET_PRIVATE_KEY || "");
+const keypair = Keypair.fromSecretKey(keypairBytes);
+console.log("pubkey", keypair.publicKey.toBase58());
+const userpubkey = keypair.publicKey
 
 	const provider = anchor.AnchorProvider.local(
 		process.env.ANCHOR_PROVIDER_URL,
@@ -77,11 +87,12 @@ const main = async () => {
 
 	// Set up the Drift Client
 	const driftPublicKey = new PublicKey(sdkConfig.DRIFT_PROGRAM_ID);
-	const bulkAccountLoader = new BulkAccountLoader(
-		provider.connection,
-		'confirmed',
-		1000
-	);
+    console.log('driftPublicKey', driftPublicKey);
+	// const bulkAccountLoader = new BulkAccountLoader(
+	// 	provider.connection,
+	// 	'confirmed',
+	// 	1000
+	// );
 	const driftClient = new DriftClient({
 		connection: provider.connection,
 		wallet: provider.wallet,
@@ -97,27 +108,28 @@ const main = async () => {
 	console.log('subscribed to driftClient');
 
     const userAccountPublicKey = await driftClient.getUserAccountPublicKey()
+	console.log("after getUserAcc")
     console.log("userAccount", userAccountPublicKey)
     //console.log("bulkAccountLoader", bulkAccountLoader)
-
-    // const [txSig, userPublickKey] = await driftClient.initializeUserAccount(
-    //     0,
-    //     "toly"
-    //   );
 
 	// Set up user client
 	const user = new User({
 		driftClient: driftClient,
-		userAccountPublicKey: await driftClient.getUserAccountPublicKey(),
-		accountSubscription: {
-			type: 'polling',
-			accountLoader: bulkAccountLoader,
-		},
+		userAccountPublicKey: getUserAccountPublicKeySync(
+			new PublicKey(DRIFT_PROGRAM_ID),
+			userpubkey,
+		)
+		//await driftClient.getUserAccountPublicKey(),
+		// accountSubscription: {
+		// 	type: 'polling',
+		// 	accountLoader: bulkAccountLoader,
+		// },
 	});
-    console.log('User', user);
+    console.log('user', user);
+    //console.log('User', user);
 	//// Check if user account exists for the current wallet
 	const userAccountExists = await user.exists();
-
+    console.log('userAccountExists', userAccountExists);
 	if (!userAccountExists) {
 		console.log(
 			'initializing to',
