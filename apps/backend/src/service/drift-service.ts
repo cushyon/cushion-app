@@ -59,6 +59,7 @@ const keypairBytes = bs58.decode(process.env.WALLET_PRIVATE_KEY || "");
 const keypair = Keypair.fromSecretKey(keypairBytes);
 console.log("pubkey", keypair.publicKey.toBase58());
 const userpubkey = keypair.publicKey
+console.log("b")
 
 	const provider = anchor.AnchorProvider.local(
 		process.env.ANCHOR_PROVIDER_URL,
@@ -88,42 +89,41 @@ const userpubkey = keypair.publicKey
 	// Set up the Drift Client
 	const driftPublicKey = new PublicKey(sdkConfig.DRIFT_PROGRAM_ID);
     console.log('driftPublicKey', driftPublicKey);
-	// const bulkAccountLoader = new BulkAccountLoader(
-	// 	provider.connection,
-	// 	'confirmed',
-	// 	1000
-	// );
+	const bulkAccountLoader = new BulkAccountLoader(
+		provider.connection,
+		'confirmed',
+		1000
+	);
 	const driftClient = new DriftClient({
 		connection: provider.connection,
 		wallet: provider.wallet,
 		programID: driftPublicKey,
-		// accountSubscription: {
-		// 	type: 'polling',
-		// 	accountLoader: bulkAccountLoader,
-		// },
+		accountSubscription: {
+			type: 'polling',
+			accountLoader: bulkAccountLoader,
+		},
 	});
     
 	await driftClient.subscribe();
 
 	console.log('subscribed to driftClient');
 
-    const userAccountPublicKey = await driftClient.getUserAccountPublicKey()
+    //const userAccountPublicKey = await driftClient.getUserAccountPublicKey()
 	console.log("after getUserAcc")
-    console.log("userAccount", userAccountPublicKey)
+    //console.log("userAccount", userAccountPublicKey)
     //console.log("bulkAccountLoader", bulkAccountLoader)
 
 	// Set up user client
 	const user = new User({
 		driftClient: driftClient,
 		userAccountPublicKey: getUserAccountPublicKeySync(
-			new PublicKey(DRIFT_PROGRAM_ID),
+			new PublicKey(sdkConfig.DRIFT_PROGRAM_ID),
 			userpubkey,
-		)
-		//await driftClient.getUserAccountPublicKey(),
-		// accountSubscription: {
-		// 	type: 'polling',
-		// 	accountLoader: bulkAccountLoader,
-		// },
+		),
+		accountSubscription: {
+			type: 'polling',
+			accountLoader: bulkAccountLoader,
+		},
 	});
     console.log('user', user);
     //console.log('User', user);
