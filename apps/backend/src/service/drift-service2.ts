@@ -97,7 +97,7 @@ const main = async () => {
   await driftClient.subscribe();
 
 
-  const orderParams = {
+  /*const orderParams = {
 	orderType: OrderType.MARKET,
 	marketIndex: 1, // SOL MARKET
 	direction: PositionDirection.LONG, // BUY SOL WITH USDC USE SHORT IF YOU WANT TO SELL SOL TO USDC
@@ -105,7 +105,25 @@ const main = async () => {
 	//price: driftClient.convertToPricePrecision(175),
   }
  
-  await driftClient.placeSpotOrder(orderParams);
+  await driftClient.placeSpotOrder(orderParams);*/
+
+  const oraclePrice = driftClient.getOracleDataForPerpMarket(18).price;
+	const auctionStartPrice = oraclePrice.neg().divn(1000); // start auction 10bps below oracle
+	const auctionEndPrice = oraclePrice.divn(1000); // end auction 10bps above oracle
+	const oraclePriceOffset = oraclePrice.divn(500); // limit price after auction 20bps above oracle
+	const auctionDuration = 30; // 30 slots
+
+const orderParams2 = {
+	orderType: OrderType.ORACLE,
+	baseAssetAmount: driftClient.convertToPerpPrecision(0.01),
+	direction: PositionDirection.LONG,
+	marketIndex: 0,
+	auctionStartPrice: auctionStartPrice,
+	auctionEndPrice: auctionEndPrice,
+	oraclePriceOffset: oraclePriceOffset,
+	auctionDuration: auctionDuration,
+	};
+	await driftClient.placePerpOrder(orderParams2)
 
 
   /*const orderParams = {
