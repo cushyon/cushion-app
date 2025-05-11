@@ -107,7 +107,8 @@ const main = async () => {
  
   await driftClient.placeSpotOrder(orderParams);*/
 
-  const oraclePrice = driftClient.getOracleDataForSpotMarket(1).price;
+  // BUY 0.1 SOL WITH USDC
+  /*const oraclePrice = driftClient.getOracleDataForSpotMarket(1).price;
   console.log("oraclePrice", oraclePrice.toString());
 	// assuming oraclePrice is a BN with PRICE_PRECISION = 1e6
 	const BASIS_POINTS = 10000;
@@ -123,7 +124,7 @@ const main = async () => {
 
 const orderParams2 = {
 	orderType: OrderType.MARKET,
-	baseAssetAmount: driftClient.convertToPerpPrecision(0.1),
+	baseAssetAmount: driftClient.convertToPerpPrecision(0.1), // USDC -> 0.1 SOL
 	direction: PositionDirection.LONG,
 	marketIndex: 1,
 	auctionStartPrice: auctionStartPrice,
@@ -131,69 +132,54 @@ const orderParams2 = {
 	auctionDuration: auctionDuration,
 	};
 	await driftClient.placeSpotOrder(orderParams2)
+	*/
 
-
-  /*const orderParams = {
-	orderType: OrderType.LIMIT,
-	marketIndex: 0, // SOL Market
-	direction: PositionDirection.LONG,
-	baseAssetAmount: driftClient.convertToSpotPrecision(0, 0.0001), // 
-  }
+	// BUY  USDC WITH SOL
+	
+	const oraclePrice = driftClient.getOracleDataForSpotMarket(1).price;
+	console.log("oraclePrice", oraclePrice.toString());
+	  // assuming oraclePrice is a BN with PRICE_PRECISION = 1e6
+	  const BASIS_POINTS = 10000;
+	  const offsetBps = 10; // 0.1% = 10bps
   
-  await driftClient.placeSpotOrder(orderParams);
-  */
+	  // Calculate ±0.1% (10 bps)
+	  const auctionStartPrice = oraclePrice.muln(BASIS_POINTS + offsetBps).divn(BASIS_POINTS);
+	  const auctionEndPrice = oraclePrice.muln(BASIS_POINTS - offsetBps).divn(BASIS_POINTS);
+	  const auctionDuration = 30; // 30 slots
+  
+	  console.log("auctionStartPrice", auctionStartPrice.toString());
+	  console.log("auctionEndPrice", auctionEndPrice.toString())
+  
+  const orderParams2 = {
+	  orderType: OrderType.MARKET,
+	  baseAssetAmount: driftClient.convertToPerpPrecision(0.1), // 0.01 SOL -> USDC
+	  direction: PositionDirection.SHORT, // SOL -> USDC
+	  marketIndex: 1,
+	  auctionStartPrice: auctionStartPrice,
+	  auctionEndPrice: auctionEndPrice,
+	  auctionDuration: auctionDuration,
+	  };
+	  await driftClient.placeSpotOrder(orderParams2)
+	
 
-  // PERP SHORT 0.01 SOL WORKING
+  // PERP SHORT 55 SOL WORKING
 /*const orderParams = {
 	orderType: OrderType.LIMIT,
 	marketIndex: 0,
 	direction: PositionDirection.SHORT,
-	baseAssetAmount: driftClient.convertToPerpPrecision(0.01),
+	baseAssetAmount: driftClient.convertToPerpPrecision(55),
 	oraclePriceOffset: driftClient.convertToPricePrecision(.05).toNumber(),
   }
   await driftClient.placePerpOrder(orderParams);
   */
 
-  
-  /*   transactionLogs: [
-    'Program ComputeBudget111111111111111111111111111111 invoke [1]',
-    'Program ComputeBudget111111111111111111111111111111 success',
-    'Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH invoke [1]',
-    'Program log: Instruction: PlaceSpotOrder',
-    'Program log: Error InvalidOrderMinOrderSize thrown at programs/drift/src/validation/order.rs:357',
-    'Program log: Order base_asset_amount (2000000) < min_order_size (100000000)',
-    'Program log: AnchorError occurred. Error Code: InvalidOrderMinOrderSize. Error Number: 6056. Error Message: InvalidOrderMinOrderSize.',
-    'Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH consumed 16978 of 599850 compute units',
-    'Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH failed: custom program error: 0x17a8'
-  ]*/
- 
-
-	/*const orderParams = {
-		orderType: OrderType.MARKET,
-		marketIndex: 0,
-		direction: PositionDirection.SHORT,
-		baseAssetAmount: driftClient.convertToSpotPrecision(1, 0.005),
-	}
-	
-	await driftClient.placeSpotOrder(orderParams);*/
-
-
- /*const orderParams = {
-	orderType: OrderType.LIMIT,
-	marketIndex: 0,
-	direction: PositionDirection.SHORT,
-	baseAssetAmount: driftClient.convertToPerpPrecision(0.1),
-	oraclePriceOffset: driftClient.convertToPricePrecision(.05).toNumber(),
-  }
-  await driftClient.placePerpOrder(orderParams);*/
-
   // CANCEL ORDER !
-
+  /*
 const marketType = MarketType.PERP;
 const marketIndex = 0; 
 const direction = PositionDirection.SHORT;
 await driftClient.cancelOrders(marketType, marketIndex, direction);
-
+*/
 
   /*const marketIndex = 0;
 
