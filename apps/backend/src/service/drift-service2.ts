@@ -21,7 +21,6 @@ import {
   getOrderParams,
   getLimitOrderParams,
   MarketType,
-  FastSingleTxSender,
   PostOnlyParams,
   PRICE_PRECISION,
   BASE_PRECISION,
@@ -83,7 +82,7 @@ const main = async () => {
     "6hpk9equdGMJf1pKs9xcuwUrMigCYC5Gec15tCbMqcs8"
   );
 
-  /*const driftClient = new DriftClient({
+  const driftClient = new DriftClient({
     connection: provider.connection,
     wallet: provider.wallet,
     env: "devnet",
@@ -93,49 +92,19 @@ const main = async () => {
     authority: authorityaddy,
     subAccountIds: [0],
     activeSubAccountId: 0,
-  });*/
-
-  const driftClient = new DriftClient({
-    connection: provider.connection,
-    wallet: provider.wallet,
-    env: "devnet",
-    authority: authorityaddy,
-    activeSubAccountId: 0,
-    subAccountIds: [0],
-    txSender: new FastSingleTxSender({
-      connection: provider.connection,
-      wallet: provider.wallet,
-      timeout: 30000,
-      blockhashRefreshInterval: 1000,
-      opts: {
-        commitment: "confirmed",
-        skipPreflight: false,
-        preflightCommitment: "confirmed",
-      },
-    }),
   });
 
-  // @ts-ignore
-const program = new Program(IDL, provider, VAULT_PROGRAM_ID);
-const vaultClient = new VaultClient({
-	driftClient,
-	// @ts-ignore
-	program,
-	cliMode: false,
-});
+  await driftClient.subscribe();
 
-await driftClient.subscribe();
-
-
-const orderParams = {
-	orderType: OrderType.LIMIT,
+  const orderParams = {
+	orderType: OrderType.MARKET,
 	marketIndex: 1,
 	direction: PositionDirection.SHORT,
-	baseAssetAmount: driftClient.convertToSpotPrecision(1, 100),
-	price: driftClient.convertToPricePrecision(100),
+	baseAssetAmount: driftClient.convertToSpotPrecision(1, 0.1),
+	price: driftClient.convertToPricePrecision(220),
   }
   
-  await vaultClient.driftClient.placeSpotOrder(orderParams);
+  await driftClient.placeSpotOrder(orderParams);
 
   // Get current price
   /*const solMarketInfo = PerpMarkets[env].find(
