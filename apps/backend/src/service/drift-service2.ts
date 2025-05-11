@@ -5,24 +5,8 @@ import bs58 from 'bs58';
 
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import {
-	calculateReservePrice,
 	DriftClient,
-	User,
-	initialize,
 	PositionDirection,
-	convertToNumber,
-	calculateTradeSlippage,
-	PRICE_PRECISION,
-	QUOTE_PRECISION,
-	Wallet,
-	PerpMarkets,
-	BASE_PRECISION,
-	getMarketOrderParams,
-	BulkAccountLoader,
-	BN,
-	calculateBidAskPrice,
-	getMarketsAndOraclesForSubscription,
-	calculateEstimatedPerpEntryPrice,
 	OrderType
 } from '@drift-labs/sdk';
 
@@ -38,16 +22,9 @@ export const getTokenAddress = (
 
 const main = async () => {
 	const env = 'devnet';
-	// const env = 'mainnet-beta';
-
-	// Initialize Drift SDK
-	const sdkConfig = initialize({ env });
 
 	const keypairBytes = bs58.decode(process.env.WALLET_PRIVATE_KEY || "");
 	const keypair = Keypair.fromSecretKey(keypairBytes);
-	console.log("pubkey", keypair.publicKey.toBase58());
-	const userpubkey = keypair.publicKey
-	console.log("b")
 
 	// Set up the Wallet and Provider
 	if (!process.env.ANCHOR_WALLET) {
@@ -94,6 +71,49 @@ const main = async () => {
 	
 	await driftClient.subscribe();
 
+	// bid for 0.5 SOL-PERP @ $170
+	const orderParams = {
+		orderType: OrderType.LIMIT,
+		marketIndex: 1,
+		direction: PositionDirection.LONG,
+		baseAssetAmount: driftClient.convertToPerpPrecision(0.5),
+		price: driftClient.convertToPricePrecision(170),
+	}
+	await driftClient.placePerpOrder(orderParams);
+
+	// Set up user client
+	/*const user = new User({
+		driftClient: driftClient,
+		userAccountPublicKey: getUserAccountPublicKeySync(
+			new PublicKey(sdkConfig.DRIFT_PROGRAM_ID),
+			userpubkey,
+		),
+		accountSubscription: {
+			type: 'polling',
+			accountLoader: bulkAccountLoader,
+		},
+	});
+
+	const userAccountExists = await user.exists();
+    console.log('userAccountExists', userAccountExists);
+	if (!userAccountExists) {
+		console.log(
+			'initializing to',
+			env,
+			' drift account for',
+			provider.wallet.publicKey.toString()
+		);
+
+		//// Create a Drift V2 account
+		const [txSig, userPublickKey] = await driftClient.initializeUserAccount(
+			0,
+			"nadar cushion"
+		  );
+		console.log("drift account created", txSig);
+	}
+
+	await user.subscribe();*/
+
 	/*const orderParams = {
 		orderType: OrderType.MARKET,
 		marketIndex: 0,
@@ -108,7 +128,7 @@ const main = async () => {
 	await driftClient.placePerpOrder(orderParams);*/
 	
 	// Get current price
-	const solMarketInfo = PerpMarkets[env].find(
+	/*const solMarketInfo = PerpMarkets[env].find(
 		(market) => market.baseAssetSymbol === 'SOL'
 	);
 
@@ -128,7 +148,7 @@ const main = async () => {
 			);
 			console.log("txSig", txSig);
 		}
-	}
+	}*/
 };
 
 main();
