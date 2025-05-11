@@ -1,6 +1,7 @@
 import * as anchor from '@coral-xyz/anchor';
 import { AnchorProvider } from '@coral-xyz/anchor';
 import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import bs58 from 'bs58';
 
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import {
@@ -22,6 +23,7 @@ import {
 	calculateBidAskPrice,
 	getMarketsAndOraclesForSubscription,
 	calculateEstimatedPerpEntryPrice,
+	OrderType
 } from '@drift-labs/sdk';
 
 export const getTokenAddress = (
@@ -41,6 +43,12 @@ const main = async () => {
 	// Initialize Drift SDK
 	const sdkConfig = initialize({ env });
 
+	const keypairBytes = bs58.decode(process.env.WALLET_PRIVATE_KEY || "");
+	const keypair = Keypair.fromSecretKey(keypairBytes);
+	console.log("pubkey", keypair.publicKey.toBase58());
+	const userpubkey = keypair.publicKey
+	console.log("b")
+
 	// Set up the Wallet and Provider
 	if (!process.env.ANCHOR_WALLET) {
 		throw new Error('ANCHOR_WALLET env var must be set.');
@@ -49,7 +57,7 @@ const main = async () => {
 	if (!process.env.ANCHOR_PROVIDER_URL) {
 		throw new Error('ANCHOR_PROVIDER_URL env var must be set.');
 	}
-
+		
 	const provider = anchor.AnchorProvider.local(
 		process.env.ANCHOR_PROVIDER_URL,
 		{
@@ -58,6 +66,7 @@ const main = async () => {
 			commitment: 'confirmed',
 		}
 	);
+	
 	// Check SOL Balance
 	const lamportsBalance = await provider.connection.getBalance(
 		provider.wallet.publicKey
@@ -69,103 +78,57 @@ const main = async () => {
 		lamportsBalance / 10 ** 9
 	);
 
-	// Misc. other things to set up
-	const usdcTokenAddress = await getTokenAddress(
-		sdkConfig.USDC_MINT_ADDRESS,
-		provider.wallet.publicKey.toString()
-	);
+	const authorityaddy = new PublicKey("6hpk9equdGMJf1pKs9xcuwUrMigCYC5Gec15tCbMqcs8");
 
-	// Set up the Drift Client
-	const driftPublicKey = new PublicKey(sdkConfig.DRIFT_PROGRAM_ID);
-	const bulkAccountLoader = new BulkAccountLoader(
-		provider.connection,
-		'confirmed',
-		1000
-	);
 	const driftClient = new DriftClient({
-		connection: provider.connection,
-		wallet: provider.wallet,
-		programID: driftPublicKey,
-		accountSubscription: {
-			type: 'polling',
-			accountLoader: bulkAccountLoader,
-		},
-	});
+			connection: provider.connection,
+			wallet: provider.wallet,
+			env: "devnet", 
+			accountSubscription: {
+				type: 'websocket',
+			},
+			authority: authorityaddy,
+			subAccountIds: [0],
+			activeSubAccountId: 0
+		});
+	
 	await driftClient.subscribe();
 
-	console.log('subscribed to driftClient');
-
-	// Set up user client
-	const user = new User({
-		driftClient: driftClient,
-		userAccountPublicKey: await driftClient.getUserAccountPublicKey(),
-		accountSubscription: {
-			type: 'polling',
-			accountLoader: bulkAccountLoader,
-		},
-	});
-
-	//// Check if user account exists for the current wallet
-	const userAccountExists = await user.exists();
-
-	if (!userAccountExists) {
-		console.log(
-			'initializing to',
-			env,
-			' drift account for',
-			provider.wallet.publicKey.toString()
-		);
-
-		//// Create a Drift V2 account by Depositing some USDC ($10,000 in this case)
-		const depositAmount = new BN(10000).mul(QUOTE_PRECISION);
-		await driftClient.initializeUserAccountAndDepositCollateral(
-			depositAmount,
-			await getTokenAddress(
-				usdcTokenAddress.toString(),
-				provider.wallet.publicKey.toString()
-			)
-		);
+	/*const orderParams = {
+		orderType: OrderType.MARKET,
+		marketIndex: 0,
+		direction: PositionDirection.LONG,
+		baseAssetAmount: driftClient.convertToPerpPrecision(100),
+		auctionStartPrice: driftClient.convertToPricePrecision(21.20),
+		auctionEndPrice: driftClient.convertToPricePrecision(21.30),
+		price: driftClient.convertToPricePrecision(21.35),
+		auctionDuration: 60,
+		maxTs: now + 100,
 	}
-
-	await user.subscribe();
-
+	await driftClient.placePerpOrder(orderParams);*/
+	
 	// Get current price
 	const solMarketInfo = PerpMarkets[env].find(
 		(market) => market.baseAssetSymbol === 'SOL'
 	);
 
-	const marketIndex = solMarketInfo.marketIndex;
-
-	// Get vAMM bid and ask price
-	const [bid, ask] = calculateBidAskPrice(
-		driftClient.getPerpMarketAccount(marketIndex).amm,
-		driftClient.getOracleDataForPerpMarket(marketIndex)
-	);
-
-	const formattedBidPrice = convertToNumber(bid, PRICE_PRECISION);
-	const formattedAskPrice = convertToNumber(ask, PRICE_PRECISION);
-
-	console.log(
-		env,
-		`vAMM bid: $${formattedBidPrice} and ask: $${formattedAskPrice}`
-	);
-
-	const solMarketAccount = driftClient.getPerpMarketAccount(
-		solMarketInfo.marketIndex
-	);
-	console.log(env, `Placing a 1 SOL-PERP LONG order`);
-
-	const txSig = await driftClient.placePerpOrder(
-		getMarketOrderParams({
-			baseAssetAmount: new BN(1).mul(BASE_PRECISION),
-			direction: PositionDirection.LONG,
-			marketIndex: solMarketAccount.marketIndex,
-		})
-	);
-	console.log(
-		env,
-		`Placed a 1 SOL-PERP LONG order. Tranaction signature: ${txSig}`
-	);
+	if(solMarketInfo){
+		const marketIndex = solMarketInfo.marketIndex;
+		const solMarketAccount = driftClient.getPerpMarketAccount(
+			marketIndex
+		);
+		if(solMarketAccount){
+			console.log(env, `Placing a 1 SOL-PERP LONG order`);
+			const txSig = await driftClient.placePerpOrder(
+				getMarketOrderParams({
+					baseAssetAmount: new BN(1).mul(BASE_PRECISION),
+					direction: PositionDirection.LONG,
+					marketIndex: solMarketAccount.marketIndex,
+				})
+			);
+			console.log("txSig", txSig);
+		}
+	}
 };
 
 main();
