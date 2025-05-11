@@ -120,15 +120,16 @@ const main = async () => {
     'Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH failed: custom program error: 0x17a8'
   ]*/
  
-  const orderParams = {
-	orderType: OrderType.LIMIT,
-	marketIndex: 1,
-	direction: PositionDirection.LONG,
-	baseAssetAmount: driftClient.convertToSpotPrecision(0, 2),
-	price: driftClient.convertToPricePrecision(100),
-  }
-  
-  await driftClient.placeSpotOrder(orderParams);
+
+	/*const orderParams = {
+		orderType: OrderType.MARKET,
+		marketIndex: 0,
+		direction: PositionDirection.SHORT,
+		baseAssetAmount: driftClient.convertToSpotPrecision(1, 0.005),
+	}
+	
+	await driftClient.placeSpotOrder(orderParams);*/
+
 
  /*const orderParams = {
 	orderType: OrderType.LIMIT,
@@ -146,19 +147,9 @@ const marketIndex = 0;
 const direction = PositionDirection.SHORT;
 await driftClient.cancelOrders(marketType, marketIndex, direction);
 */
+  const marketIndex = 0;
 
-  // Get current price
-  /*const solMarketInfo = PerpMarkets[env].find(
-    (market) => market.baseAssetSymbol === "SOL"
-  );
-
-  if (!solMarketInfo) {
-    throw new Error("SOL market not found");
-  }
-
-  const marketIndex = solMarketInfo.marketIndex;
-
-  if (!marketIndex) throw new Error("SOL market index not found");
+  if (marketIndex == undefined) throw new Error("SOL market index not found");
 
   const amm = driftClient.getPerpMarketAccount(marketIndex)?.amm;
   if (!amm) throw new Error("SOL market account not found");
@@ -178,8 +169,9 @@ await driftClient.cancelOrders(marketType, marketIndex, direction);
   );
 
   const solMarketAccount = driftClient.getPerpMarketAccount(
-    solMarketInfo.marketIndex
+    marketIndex
   );
+  console.log("solMarketAccount", solMarketAccount);
 
   if (!solMarketAccount) throw new Error("SOL market not found");
 
@@ -187,7 +179,7 @@ await driftClient.cancelOrders(marketType, marketIndex, direction);
 
   const txSig = await driftClient.placePerpOrder(
     getMarketOrderParams({
-      baseAssetAmount: new BN(1).mul(BASE_PRECISION),
+      baseAssetAmount: new BN(0.1).mul(BASE_PRECISION),
       direction: PositionDirection.LONG,
       marketIndex: solMarketAccount.marketIndex,
     })
@@ -195,7 +187,7 @@ await driftClient.cancelOrders(marketType, marketIndex, direction);
   console.log(
     env,
     `Placed a 1 SOL-PERP LONG order. Tranaction signature: ${txSig}`
-  );*/
+  );
 };
 
 main();
