@@ -1,7 +1,8 @@
 import * as anchor from "@coral-xyz/anchor";
 import { getAssociatedTokenAddress } from "@solana/spl-token";
 import bs58 from "bs58";
-
+import { AnchorProvider, Program, Provider } from '@coral-xyz/anchor';
+import { IDL, VAULT_PROGRAM_ID, VaultClient } from "@drift-labs/vaults-sdk";
 import {
   Keypair,
   PublicKey,
@@ -19,8 +20,8 @@ import {
   DRIFT_PROGRAM_ID,
   getOrderParams,
   getLimitOrderParams,
-  numberToSafeBN,
   MarketType,
+  FastSingleTxSender,
   PostOnlyParams,
   PRICE_PRECISION,
   BASE_PRECISION,
@@ -82,7 +83,7 @@ const main = async () => {
     "6hpk9equdGMJf1pKs9xcuwUrMigCYC5Gec15tCbMqcs8"
   );
 
-  const driftClientVault = new DriftClient({
+  /*const driftClient = new DriftClient({
     connection: provider.connection,
     wallet: provider.wallet,
     env: "devnet",
@@ -92,12 +93,52 @@ const main = async () => {
     authority: authorityaddy,
     subAccountIds: [0],
     activeSubAccountId: 0,
+  });*/
+
+  const driftClient = new DriftClient({
+    connection: provider.connection,
+    wallet: provider.wallet,
+    env: "devnet",
+    authority: authorityaddy,
+    activeSubAccountId: 0,
+    subAccountIds: [0],
+    txSender: new FastSingleTxSender({
+      connection: provider.connection,
+      wallet: provider.wallet,
+      timeout: 30000,
+      blockhashRefreshInterval: 1000,
+      opts: {
+        commitment: "confirmed",
+        skipPreflight: false,
+        preflightCommitment: "confirmed",
+      },
+    }),
   });
 
-  await driftClientVault.subscribe();
+  // @ts-ignore
+const program = new Program(IDL, provider, VAULT_PROGRAM_ID);
+const vaultClient = new VaultClient({
+	driftClient,
+	// @ts-ignore
+	program,
+	cliMode: false,
+});
+
+await driftClient.subscribe();
+
+
+const orderParams = {
+	orderType: OrderType.LIMIT,
+	marketIndex: 1,
+	direction: PositionDirection.SHORT,
+	baseAssetAmount: driftClient.convertToSpotPrecision(1, 100),
+	price: driftClient.convertToPricePrecision(100),
+  }
+  
+  await vaultClient.driftClient.placeSpotOrder(orderParams);
 
   // Get current price
-  const solMarketInfo = PerpMarkets[env].find(
+  /*const solMarketInfo = PerpMarkets[env].find(
     (market) => market.baseAssetSymbol === "SOL"
   );
 
@@ -109,13 +150,13 @@ const main = async () => {
 
   if (!marketIndex) throw new Error("SOL market index not found");
 
-  const amm = driftClientVault.getPerpMarketAccount(marketIndex)?.amm;
+  const amm = driftClient.getPerpMarketAccount(marketIndex)?.amm;
   if (!amm) throw new Error("SOL market account not found");
 
   // Get vAMM bid and ask price
   const [bid, ask] = calculateBidAskPrice(
     amm,
-    driftClientVault.getOracleDataForPerpMarket(marketIndex)
+    driftClient.getOracleDataForPerpMarket(marketIndex)
   );
 
   const formattedBidPrice = convertToNumber(bid, PRICE_PRECISION);
@@ -126,7 +167,7 @@ const main = async () => {
     `vAMM bid: $${formattedBidPrice} and ask: $${formattedAskPrice}`
   );
 
-  const solMarketAccount = driftClientVault.getPerpMarketAccount(
+  const solMarketAccount = driftClient.getPerpMarketAccount(
     solMarketInfo.marketIndex
   );
 
@@ -134,7 +175,7 @@ const main = async () => {
 
   console.log(env, `Placing a 1 SOL-PERP LONG order`);
 
-  const txSig = await driftClientVault.placePerpOrder(
+  const txSig = await driftClient.placePerpOrder(
     getMarketOrderParams({
       baseAssetAmount: new BN(1).mul(BASE_PRECISION),
       direction: PositionDirection.LONG,
@@ -144,64 +185,7 @@ const main = async () => {
   console.log(
     env,
     `Placed a 1 SOL-PERP LONG order. Tranaction signature: ${txSig}`
-  );
-
-  /*const orderParams = {
-		orderType: OrderType.LIMIT,
-		marketIndex: 1,
-		direction: PositionDirection.SHORT,
-		baseAssetAmount: driftClientVault.convertToSpotPrecision(1, 100),
-		price: driftClientVault.convertToPricePrecision(100),
-	  }
-	  
-	  await driftClientVault.placeSpotOrder(orderParams);*/
-
-  /*const usdcSpotMarket = driftClientVault.getSpotMarketAccount(0);
-    if (!usdcSpotMarket) {
-      throw new Error("USDC-SPOT market not found");
-    }
-
-    const perpMarketAccount = driftClientVault.getPerpMarketAccount(
-      1,
-    );
-
-    if (!perpMarketAccount) {
-      throw new Error(
-        "Invalid symbol: Drift doesn't have a market for this token",
-      );
-    }
-
-	  const instructions: TransactionInstruction[] = [];
-	  instructions.push(
-		ComputeBudgetProgram.setComputeUnitLimit({ units: 1400000 }),
-	  );
-      const instruction = await driftClientVault.getPlaceOrdersIx([
-        getOrderParams(
-          getLimitOrderParams({
-            price: numberToSafeBN(160, PRICE_PRECISION),
-            marketType: MarketType.PERP,
-            baseAssetAmount: numberToSafeBN(160, BASE_PRECISION),
-            direction: PositionDirection.SHORT,
-            marketIndex: perpMarketAccount.marketIndex,
-            postOnly: PostOnlyParams.SLIDE,
-          }),
-        ),
-      ]);
-
-      instructions.push(instruction);
-
-	  const driftLookupTableAccount = await driftClientVault.fetchMarketLookupTableAccount()
-
-	  const latestBlockhash = await driftClientVault.connection.getLatestBlockhash();
-		const tx = await driftClientVault.txSender.sendVersionedTransaction(
-		await driftClientVault.txSender.getVersionedTransaction(
-			instructions,
-			[driftLookupTableAccount],
-			[],
-			driftClientVault.opts,
-			latestBlockhash,
-		),
-		);*/
+  );*/
 };
 
 main();
