@@ -96,9 +96,30 @@ const main = async () => {
 
   await driftClient.subscribe();
 
-  // ORDER 0.01 USDC 
-  /*
+
   const orderParams = {
+	orderType: OrderType.MARKET,
+	marketIndex: 1, // SOL MARKET
+	direction: PositionDirection.LONG, // BUY SOL WITH USDC USE SHORT IF YOU WANT TO SELL SOL TO USDC
+	baseAssetAmount: driftClient.convertToSpotPrecision(1, 0.1), 
+	//price: driftClient.convertToPricePrecision(175),
+  }
+ 
+  await driftClient.placeSpotOrder(orderParams);
+
+
+  /*const orderParams = {
+	orderType: OrderType.LIMIT,
+	marketIndex: 0, // SOL Market
+	direction: PositionDirection.LONG,
+	baseAssetAmount: driftClient.convertToSpotPrecision(0, 0.0001), // 
+  }
+  
+  await driftClient.placeSpotOrder(orderParams);
+  */
+
+  // PERP SHORT 0.01 SOL WORKING
+/*const orderParams = {
 	orderType: OrderType.LIMIT,
 	marketIndex: 0,
 	direction: PositionDirection.SHORT,
@@ -107,6 +128,7 @@ const main = async () => {
   }
   await driftClient.placePerpOrder(orderParams);
   */
+
   
   /*   transactionLogs: [
     'Program ComputeBudget111111111111111111111111111111 invoke [1]',
@@ -141,13 +163,14 @@ const main = async () => {
   await driftClient.placePerpOrder(orderParams);*/
 
   // CANCEL ORDER !
-/*
+
 const marketType = MarketType.PERP;
 const marketIndex = 0; 
 const direction = PositionDirection.SHORT;
 await driftClient.cancelOrders(marketType, marketIndex, direction);
-*/
-  const marketIndex = 0;
+
+
+  /*const marketIndex = 0;
 
   if (marketIndex == undefined) throw new Error("SOL market index not found");
 
@@ -187,7 +210,7 @@ await driftClient.cancelOrders(marketType, marketIndex, direction);
   console.log(
     env,
     `Placed a 1 SOL-PERP LONG order. Tranaction signature: ${txSig}`
-  );
+  );*/
 };
 
 main();
