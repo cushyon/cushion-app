@@ -96,6 +96,7 @@ const main = async () => {
 
   await driftClient.subscribe();
 
+  /*
   const orderParams = {
 	orderType: OrderType.MARKET,
 	marketIndex: 1,
@@ -104,7 +105,16 @@ const main = async () => {
 	price: driftClient.convertToPricePrecision(220),
   }
   
-  await driftClient.placeSpotOrder(orderParams);
+  await driftClient.placeSpotOrder(orderParams);*/
+
+  const orderParams = {
+	orderType: OrderType.LIMIT,
+	marketIndex: 0,
+	direction: PositionDirection.SHORT,
+	baseAssetAmount: driftClient.convertToPerpPrecision(0.1),
+	oraclePriceOffset: driftClient.convertToPricePrecision(.05).toNumber(),
+  }
+  await driftClient.placePerpOrder(orderParams);
 
   // Get current price
   /*const solMarketInfo = PerpMarkets[env].find(
