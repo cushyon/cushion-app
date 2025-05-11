@@ -96,17 +96,6 @@ const main = async () => {
 
   await driftClient.subscribe();
 
-
-  /*const orderParams = {
-	orderType: OrderType.MARKET,
-	marketIndex: 1, // SOL MARKET
-	direction: PositionDirection.LONG, // BUY SOL WITH USDC USE SHORT IF YOU WANT TO SELL SOL TO USDC
-	baseAssetAmount: driftClient.convertToSpotPrecision(1, 0.1), 
-	//price: driftClient.convertToPricePrecision(175),
-  }
- 
-  await driftClient.placeSpotOrder(orderParams);*/
-
   // BUY 0.1 SOL WITH USDC
   /*const oraclePrice = driftClient.getOracleDataForSpotMarket(1).price;
   console.log("oraclePrice", oraclePrice.toString());
@@ -222,6 +211,16 @@ await driftClient.cancelOrders(marketType, marketIndex, direction);
     env,
     `Placed a 1 SOL-PERP LONG order. Tranaction signature: ${txSig}`
   );*/
+
+    /*const orderParams = {
+	orderType: OrderType.MARKET,
+	marketIndex: 1, // SOL MARKET
+	direction: PositionDirection.LONG, // BUY SOL WITH USDC USE SHORT IF YOU WANT TO SELL SOL TO USDC
+	baseAssetAmount: driftClient.convertToSpotPrecision(1, 0.1), 
+	//price: driftClient.convertToPricePrecision(175),
+  }
+ 
+  await driftClient.placeSpotOrder(orderParams);*/
 };
 
 main();
