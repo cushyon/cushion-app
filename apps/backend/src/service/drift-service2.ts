@@ -115,7 +115,7 @@ const main = async () => {
 
 const orderParams2 = {
 	orderType: OrderType.ORACLE,
-	baseAssetAmount: driftClient.convertToPerpPrecision(0.01),
+	baseAssetAmount: driftClient.convertToPerpPrecision(0.1),
 	direction: PositionDirection.LONG,
 	marketIndex: 0,
 	auctionStartPrice: auctionStartPrice,
