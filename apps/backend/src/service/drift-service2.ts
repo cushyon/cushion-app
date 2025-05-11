@@ -43,7 +43,7 @@ export const getTokenAddress = (
 };
 
 const main = async () => {
-  const env = "devnet";
+  const env = "mainnet-beta";
   const sdkConfig = initialize({ env });
 
   const keypairBytes = bs58.decode(process.env.WALLET_PRIVATE_KEY || "");
@@ -79,13 +79,13 @@ const main = async () => {
   );
 
   const authorityaddy = new PublicKey(
-    "6hpk9equdGMJf1pKs9xcuwUrMigCYC5Gec15tCbMqcs8"
+    "FTKm3WgS8K5AkDKL9UZnmD12JdhFnvxvNN1mF6adGXH9"
   );
 
   const driftClient = new DriftClient({
     connection: provider.connection,
     wallet: provider.wallet,
-    env: "devnet",
+    env: "mainnet-beta",
     accountSubscription: {
       type: "websocket",
     },
@@ -96,25 +96,56 @@ const main = async () => {
 
   await driftClient.subscribe();
 
+  // ORDER 0.01 USDC 
   /*
   const orderParams = {
-	orderType: OrderType.MARKET,
-	marketIndex: 1,
+	orderType: OrderType.LIMIT,
+	marketIndex: 0,
 	direction: PositionDirection.SHORT,
-	baseAssetAmount: driftClient.convertToSpotPrecision(1, 0.1),
-	price: driftClient.convertToPricePrecision(220),
+	baseAssetAmount: driftClient.convertToPerpPrecision(0.01),
+	oraclePriceOffset: driftClient.convertToPricePrecision(.05).toNumber(),
+  }
+  await driftClient.placePerpOrder(orderParams);
+  */
+  
+  /*   transactionLogs: [
+    'Program ComputeBudget111111111111111111111111111111 invoke [1]',
+    'Program ComputeBudget111111111111111111111111111111 success',
+    'Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH invoke [1]',
+    'Program log: Instruction: PlaceSpotOrder',
+    'Program log: Error InvalidOrderMinOrderSize thrown at programs/drift/src/validation/order.rs:357',
+    'Program log: Order base_asset_amount (2000000) < min_order_size (100000000)',
+    'Program log: AnchorError occurred. Error Code: InvalidOrderMinOrderSize. Error Number: 6056. Error Message: InvalidOrderMinOrderSize.',
+    'Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH consumed 16978 of 599850 compute units',
+    'Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH failed: custom program error: 0x17a8'
+  ]*/
+ 
+  const orderParams = {
+	orderType: OrderType.LIMIT,
+	marketIndex: 1,
+	direction: PositionDirection.LONG,
+	baseAssetAmount: driftClient.convertToSpotPrecision(0, 2),
+	price: driftClient.convertToPricePrecision(100),
   }
   
-  await driftClient.placeSpotOrder(orderParams);*/
+  await driftClient.placeSpotOrder(orderParams);
 
-  const orderParams = {
+ /*const orderParams = {
 	orderType: OrderType.LIMIT,
 	marketIndex: 0,
 	direction: PositionDirection.SHORT,
 	baseAssetAmount: driftClient.convertToPerpPrecision(0.1),
 	oraclePriceOffset: driftClient.convertToPricePrecision(.05).toNumber(),
   }
-  await driftClient.placePerpOrder(orderParams);
+  await driftClient.placePerpOrder(orderParams);*/
+
+  // CANCEL ORDER !
+/*
+const marketType = MarketType.PERP;
+const marketIndex = 0; 
+const direction = PositionDirection.SHORT;
+await driftClient.cancelOrders(marketType, marketIndex, direction);
+*/
 
   // Get current price
   /*const solMarketInfo = PerpMarkets[env].find(
