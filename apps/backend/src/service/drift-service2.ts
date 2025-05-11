@@ -24,6 +24,11 @@ import {
   PostOnlyParams,
   PRICE_PRECISION,
   BASE_PRECISION,
+  PerpMarkets,
+  calculateBidAskPrice,
+  convertToNumber,
+  getMarketOrderParams,
+  BN,
 } from "@drift-labs/sdk";
 import { Public } from "@prisma/client/runtime/library";
 
@@ -96,12 +101,21 @@ const main = async () => {
     (market) => market.baseAssetSymbol === "SOL"
   );
 
+  if (!solMarketInfo) {
+    throw new Error("SOL market not found");
+  }
+
   const marketIndex = solMarketInfo.marketIndex;
+
+  if (!marketIndex) throw new Error("SOL market index not found");
+
+  const amm = driftClientVault.getPerpMarketAccount(marketIndex)?.amm;
+  if (!amm) throw new Error("SOL market account not found");
 
   // Get vAMM bid and ask price
   const [bid, ask] = calculateBidAskPrice(
-    driftClient.getPerpMarketAccount(marketIndex).amm,
-    driftClient.getOracleDataForPerpMarket(marketIndex)
+    amm,
+    driftClientVault.getOracleDataForPerpMarket(marketIndex)
   );
 
   const formattedBidPrice = convertToNumber(bid, PRICE_PRECISION);
@@ -112,12 +126,15 @@ const main = async () => {
     `vAMM bid: $${formattedBidPrice} and ask: $${formattedAskPrice}`
   );
 
-  const solMarketAccount = driftClient.getPerpMarketAccount(
+  const solMarketAccount = driftClientVault.getPerpMarketAccount(
     solMarketInfo.marketIndex
   );
+
+  if (!solMarketAccount) throw new Error("SOL market not found");
+
   console.log(env, `Placing a 1 SOL-PERP LONG order`);
 
-  const txSig = await driftClient.placePerpOrder(
+  const txSig = await driftClientVault.placePerpOrder(
     getMarketOrderParams({
       baseAssetAmount: new BN(1).mul(BASE_PRECISION),
       direction: PositionDirection.LONG,
