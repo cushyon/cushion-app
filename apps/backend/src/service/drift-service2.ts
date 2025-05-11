@@ -1,14 +1,18 @@
 import * as anchor from '@coral-xyz/anchor';
-import { AnchorProvider } from '@coral-xyz/anchor';
-import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { getAssociatedTokenAddress } from '@solana/spl-token';
 import bs58 from 'bs58';
 
-import { Connection, Keypair, PublicKey } from '@solana/web3.js';
+import { Keypair, PublicKey } from '@solana/web3.js';
 import {
 	DriftClient,
 	PositionDirection,
-	OrderType
+	OrderType,
+	User,
+	getUserAccountPublicKeySync,
+	initialize,
+	BulkAccountLoader
 } from '@drift-labs/sdk';
+import { Public } from '@prisma/client/runtime/library';
 
 export const getTokenAddress = (
 	mintAddress: string,
@@ -22,6 +26,7 @@ export const getTokenAddress = (
 
 const main = async () => {
 	const env = 'devnet';
+	const sdkConfig = initialize({ env });
 
 	const keypairBytes = bs58.decode(process.env.WALLET_PRIVATE_KEY || "");
 	const keypair = Keypair.fromSecretKey(keypairBytes);
@@ -57,7 +62,7 @@ const main = async () => {
 
 	const authorityaddy = new PublicKey("6hpk9equdGMJf1pKs9xcuwUrMigCYC5Gec15tCbMqcs8");
 
-	const driftClient = new DriftClient({
+	const driftClientVault = new DriftClient({
 			connection: provider.connection,
 			wallet: provider.wallet,
 			env: "devnet", 
@@ -69,24 +74,27 @@ const main = async () => {
 			activeSubAccountId: 0
 		});
 	
-	await driftClient.subscribe();
+	await driftClientVault.subscribe();
 
-	// bid for 0.5 SOL-PERP @ $170
-	const orderParams = {
-		orderType: OrderType.LIMIT,
-		marketIndex: 1,
-		direction: PositionDirection.LONG,
-		baseAssetAmount: driftClient.convertToPerpPrecision(0.5),
-		price: driftClient.convertToPricePrecision(170),
-	}
-	await driftClient.placePerpOrder(orderParams);
+	/*const driftClient = new DriftClient({
+		connection: provider.connection,
+		wallet: provider.wallet,
+		env: 'devnet',
+	  });
+	  
+	  await driftClient.subscribe();*/
 
+	const bulkAccountLoader = new BulkAccountLoader(
+		provider.connection,
+		'confirmed',
+		1000
+	);
 	// Set up user client
-	/*const user = new User({
-		driftClient: driftClient,
+	const user = new User({
+		driftClient: driftClientVault,
 		userAccountPublicKey: getUserAccountPublicKeySync(
-			new PublicKey(sdkConfig.DRIFT_PROGRAM_ID),
-			userpubkey,
+			new PublicKey(authorityaddy),
+			new PublicKey("76X1E2EAdB2ZFB8gt4cXf8Qe9CJJH6dmxwYfnX5vv23m"),
 		),
 		accountSubscription: {
 			type: 'polling',
@@ -105,50 +113,24 @@ const main = async () => {
 		);
 
 		//// Create a Drift V2 account
-		const [txSig, userPublickKey] = await driftClient.initializeUserAccount(
+		const [txSig, userPublickKey] = await driftClientVault.initializeUserAccount(
 			0,
-			"nadar cushion"
+			"nadar cushion 2"
 		  );
 		console.log("drift account created", txSig);
 	}
 
-	await user.subscribe();*/
+	await user.subscribe();
 
-	/*const orderParams = {
-		orderType: OrderType.MARKET,
-		marketIndex: 0,
-		direction: PositionDirection.LONG,
-		baseAssetAmount: driftClient.convertToPerpPrecision(100),
-		auctionStartPrice: driftClient.convertToPricePrecision(21.20),
-		auctionEndPrice: driftClient.convertToPricePrecision(21.30),
-		price: driftClient.convertToPricePrecision(21.35),
-		auctionDuration: 60,
-		maxTs: now + 100,
-	}
-	await driftClient.placePerpOrder(orderParams);*/
-	
-	// Get current price
-	/*const solMarketInfo = PerpMarkets[env].find(
-		(market) => market.baseAssetSymbol === 'SOL'
-	);
-
-	if(solMarketInfo){
-		const marketIndex = solMarketInfo.marketIndex;
-		const solMarketAccount = driftClient.getPerpMarketAccount(
-			marketIndex
-		);
-		if(solMarketAccount){
-			console.log(env, `Placing a 1 SOL-PERP LONG order`);
-			const txSig = await driftClient.placePerpOrder(
-				getMarketOrderParams({
-					baseAssetAmount: new BN(1).mul(BASE_PRECISION),
-					direction: PositionDirection.LONG,
-					marketIndex: solMarketAccount.marketIndex,
-				})
-			);
-			console.log("txSig", txSig);
-		}
-	}*/
+	const orderParams = {
+		orderType: OrderType.LIMIT,
+		marketIndex: 1,
+		direction: PositionDirection.SHORT,
+		baseAssetAmount: driftClientVault.convertToSpotPrecision(1, 100),
+		price: driftClientVault.convertToPricePrecision(100),
+	  }
+	  
+	  await driftClientVault.placeSpotOrder(orderParams);
 };
 
 main();
