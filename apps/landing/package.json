@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.1.1",
+    "@repo/config-tailwind": "workspace:*",
     "@repo/database": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
