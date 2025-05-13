@@ -1,0 +1,8 @@
+/* v4 one-liner (preferred) */
+@import "tailwindcss";
+
+/* —or— keep the classic directives, both still work —
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+*/
