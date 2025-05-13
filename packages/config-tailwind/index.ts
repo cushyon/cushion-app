@@ -1,12 +1,13 @@
-// packages/config-tailwind/index.ts
 import type { Config } from "tailwindcss";
 
 export default {
-  //  ✘ darkMode: false,
-  // choose one of the new values ──────────────────────┐
-  darkMode: "class",            // keep the old behaviour
-  // darkMode: "media",          // system preference
-  // darkMode: ["selector", "[data-theme='dark']"], // custom
-  // ───────────────────────────────────────────────────┘
+  /* --- remove or change this line --- */
+  // darkMode: false, ⇦ ❌ outdated
+  // pick one of the valid values instead:
+  darkMode: "class",                       // common
+  // darkMode: "media",                    // follow OS
+  // darkMode: ["selector", "[data-theme='dark']"], // v3.4+ selector strategy
+  /* ----------------------------------- */
   theme: { /* … */ },
+  plugins: [],
 } satisfies Config;
