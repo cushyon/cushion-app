@@ -1,11 +1,21 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "CommonJS",
-    "outDir": "dist",
-    "rootDir": "src",
+    "target": "es6",
+    "module": "commonjs",
+    "allowJs": true,
     "strict": true,
-    "esModuleInterop": true
+    "baseUrl": ".",
+    "outDir": "dist",
+    "types": ["node"],
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "@src/*": ["src/*"]
+    },
+    "useUnknownInCatchVariables": false
   },
-  "include": ["src"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/public/"]
 }
