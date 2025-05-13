@@ -1,6 +1,6 @@
 import axios from "axios";
 
-interface TokenAccountBalanceResponse {
+export interface TokenAccountBalanceResponse {
   jsonrpc: string;
   id: number;
   result: {
