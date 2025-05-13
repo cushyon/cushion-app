@@ -18,7 +18,13 @@
     "lint": "turbo run lint",
     "backend:dev": "turbo run dev --filter=backend",
     "backend:build": "turbo run build --filter=backend",
-    "backend:start": "turbo run start --filter=backend"
+    "backend:start": "turbo run start --filter=backend",
+    "landing:dev": "turbo run dev --filter=landing",
+    "landing:build": "turbo run build --filter=landing",
+    "landing:start": "turbo run start --filter=landing",
+    "dapp:dev": "turbo run dev --filter=dapp",
+    "dapp:build": "turbo run build --filter=dapp",
+    "dapp:start": "turbo run start --filter=dapp"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.5",
