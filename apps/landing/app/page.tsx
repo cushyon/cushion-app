@@ -27,9 +27,11 @@ export default function Home() {
           >
             Resources
           </Link>
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6">
-            Launch app
-          </Button>
+          <Link href="https://app.cushion.trade">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6">
+              Launch app
+            </Button>
+          </Link>
         </div>
       </header>
 
