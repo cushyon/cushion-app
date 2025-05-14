@@ -42,33 +42,33 @@ export const getTokenAddress = (
   );
 };
 
-const main = async () => {
-  const env = "mainnet-beta";
-  const sdkConfig = initialize({ env });
-
-  console.log("env anch", process.env.ANCHOR_WALLET);
-  //console.log("env", process.env);
-
-  // const keypairBytes = bs58.decode(process.env.WALLET_PRIVATE_KEY || "");
-  // const keypair = Keypair.fromSecretKey(keypairBytes);
-
-  // Set up the Wallet and Provider
+/**
+ * Build an {@link AnchorProvider} from the current environment variables.
+ *
+ * Required env vars:
+ *  - `ANCHOR_WALLET`  – path to the keypair json or a base58 secret key string
+ *  - `ANCHOR_PROVIDER_URL` – RPC endpoint
+ */
+export function initProvider(): AnchorProvider {
   if (!process.env.ANCHOR_WALLET) {
     throw new Error("ANCHOR_WALLET env var must be set.");
   }
-
   if (!process.env.ANCHOR_PROVIDER_URL) {
     throw new Error("ANCHOR_PROVIDER_URL env var must be set.");
   }
 
-  const provider = anchor.AnchorProvider.local(
-    process.env.ANCHOR_PROVIDER_URL,
-    {
-      preflightCommitment: "confirmed",
-      skipPreflight: false,
-      commitment: "confirmed",
-    }
-  );
+  return anchor.AnchorProvider.local(process.env.ANCHOR_PROVIDER_URL, {
+    preflightCommitment: "confirmed",
+    skipPreflight: false,
+    commitment: "confirmed",
+  });
+}
+
+const main = async () => {
+  const env = "mainnet-beta";
+  const sdkConfig = initialize({ env });
+
+  const provider = initProvider();
 
   // Check SOL Balance
   const lamportsBalance = await provider.connection.getBalance(
