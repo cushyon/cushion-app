@@ -96,7 +96,7 @@ export async function createDriftClient(
 
 const BASIS_POINTS = 10_000;
 
-function deriveAuctionBandBuy({
+function deriveAuctionBand({
   oraclePrice,
   offsetBps,
 }: {
@@ -109,18 +109,6 @@ function deriveAuctionBandBuy({
   };
 }
 
-function deriveAuctionBandSell({
-  oraclePrice,
-  offsetBps,
-}: {
-  oraclePrice: BN;
-  offsetBps: number;
-}): { start: BN; end: BN } {
-  return {
-    start: oraclePrice.muln(BASIS_POINTS + offsetBps).divn(BASIS_POINTS),
-    end: oraclePrice.muln(BASIS_POINTS - offsetBps).divn(BASIS_POINTS),
-  };
-}
 
 export async function buySolWithUsdc(
   driftClient: DriftClient,
@@ -137,7 +125,7 @@ export async function buySolWithUsdc(
   } = {}
 ): Promise<string> {
   const oraclePrice = driftClient.getOracleDataForSpotMarket(marketIndex).price;
-  const { start, end } = deriveAuctionBandBuy({ oraclePrice, offsetBps });
+  const { start, end } = deriveAuctionBand({ oraclePrice, offsetBps });
 
   const params = {
     orderType: OrderType.MARKET,
@@ -169,7 +157,7 @@ export async function sellSolForUsdc(
   } = {}
 ): Promise<string> {
   const oraclePrice = driftClient.getOracleDataForSpotMarket(marketIndex).price;
-  const { start: end, end: start } = deriveAuctionBandSell({ oraclePrice, offsetBps });
+  const { start: end, end: start } = deriveAuctionBand({ oraclePrice, offsetBps });
 
   const params = {
     orderType: OrderType.MARKET,
