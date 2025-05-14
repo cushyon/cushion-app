@@ -46,6 +46,9 @@ const main = async () => {
   const env = "mainnet-beta";
   const sdkConfig = initialize({ env });
 
+  console.log("env anc", process.env.ANCHOR_WALLET);
+  console.log("env", process.env);
+
   // const keypairBytes = bs58.decode(process.env.WALLET_PRIVATE_KEY || "");
   // const keypair = Keypair.fromSecretKey(keypairBytes);
 
