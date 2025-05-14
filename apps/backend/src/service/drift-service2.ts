@@ -100,7 +100,7 @@ const main = async () => {
   await driftClient.subscribe();
 
 
-  /*
+  
   // BUY 0.1 SOL WITH USDC
   const oraclePrice = driftClient.getOracleDataForSpotMarket(1).price;
   console.log("oraclePrice", oraclePrice.toString());
@@ -125,10 +125,10 @@ const orderParams2 = {
 	auctionEndPrice: auctionEndPrice,
 	auctionDuration: auctionDuration,
 	};
-	await driftClient.placeSpotOrder(orderParams2)*/
+	await driftClient.placeSpotOrder(orderParams2)
 
 
-  
+  /*
   // SELL 0.1 SOL FOR USDC
   const oraclePrice = driftClient.getOracleDataForSpotMarket(1).price;
   console.log("oraclePrice", oraclePrice.toString());
@@ -154,7 +154,7 @@ const orderParams2 = {
   auctionDuration: auctionDuration,
   };
   const txSig = await driftClient.placeSpotOrder(orderParams2);
-  console.log("Transaction signature:", txSig);
+  console.log("Transaction signature:", txSig);*/
 	
 
   // BUY  USDC WITH SOL
