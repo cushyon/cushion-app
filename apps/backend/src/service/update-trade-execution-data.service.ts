@@ -1,4 +1,4 @@
-import { prisma } from "@repo/database/src/client";
+import { prisma } from "@repo/database";
 
 export const updateTradeExecutionData = async (
   id: string,
