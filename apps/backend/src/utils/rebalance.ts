@@ -13,7 +13,7 @@ export const wETH = "7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs";
 export const META = "METADDFL6wWMWEoKTFJwcThTbUmtarRJZjRpzUvkxhr";
 export const JITOSOL = "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn";
 
-let ASSET1 = JITOSOL;
+let ASSET1 = SOL;
 const ASSET2 = USDC;
 const PAIR = `${ASSET1}-${ASSET2}`;
 
