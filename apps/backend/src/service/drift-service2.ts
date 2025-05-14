@@ -94,6 +94,96 @@ export async function createDriftClient(
   return driftClient;
 }
 
+const BASIS_POINTS = 10_000;
+
+function deriveAuctionBandBuy({
+  oraclePrice,
+  offsetBps,
+}: {
+  oraclePrice: BN;
+  offsetBps: number;
+}): { start: BN; end: BN } {
+  return {
+    start: oraclePrice.muln(BASIS_POINTS - offsetBps).divn(BASIS_POINTS),
+    end: oraclePrice.muln(BASIS_POINTS + offsetBps).divn(BASIS_POINTS),
+  };
+}
+
+function deriveAuctionBandSell({
+  oraclePrice,
+  offsetBps,
+}: {
+  oraclePrice: BN;
+  offsetBps: number;
+}): { start: BN; end: BN } {
+  return {
+    start: oraclePrice.muln(BASIS_POINTS + offsetBps).divn(BASIS_POINTS),
+    end: oraclePrice.muln(BASIS_POINTS - offsetBps).divn(BASIS_POINTS),
+  };
+}
+
+export async function buySolWithUsdc(
+  driftClient: DriftClient,
+  {
+    amountSol = 0.1,
+    marketIndex = 1,
+    offsetBps = 10,
+    auctionDuration = 30,
+  }: {
+    amountSol?: number;
+    marketIndex?: number;
+    offsetBps?: number;
+    auctionDuration?: number;
+  } = {}
+): Promise<string> {
+  const oraclePrice = driftClient.getOracleDataForSpotMarket(marketIndex).price;
+  const { start, end } = deriveAuctionBandBuy({ oraclePrice, offsetBps });
+
+  const params = {
+    orderType: OrderType.MARKET,
+    baseAssetAmount: driftClient.convertToPerpPrecision(amountSol),
+    direction: PositionDirection.LONG,
+    marketIndex,
+    auctionStartPrice: start,
+    auctionEndPrice: end,
+    auctionDuration,
+  } as const;
+
+  return driftClient.placeSpotOrder(params);
+}
+
+
+
+export async function sellSolForUsdc(
+  driftClient: DriftClient,
+  {
+    amountSol = 0.1,
+    marketIndex = 1,
+    offsetBps = 10,
+    auctionDuration = 30,
+  }: {
+    amountSol?: number;
+    marketIndex?: number;
+    offsetBps?: number;
+    auctionDuration?: number;
+  } = {}
+): Promise<string> {
+  const oraclePrice = driftClient.getOracleDataForSpotMarket(marketIndex).price;
+  const { start: end, end: start } = deriveAuctionBandSell({ oraclePrice, offsetBps });
+
+  const params = {
+    orderType: OrderType.MARKET,
+    baseAssetAmount: driftClient.convertToPerpPrecision(amountSol),
+    direction: PositionDirection.SHORT,
+    marketIndex,
+    auctionStartPrice: start,
+    auctionEndPrice: end,
+    auctionDuration,
+  } as const;
+
+  return driftClient.placeSpotOrder(params);
+}
+
 const main = async () => {
   const env = "mainnet-beta";
   const sdkConfig = initialize({ env });
@@ -114,7 +204,13 @@ const main = async () => {
   const authorityaddy = new PublicKey("FTKm3WgS8K5AkDKL9UZnmD12JdhFnvxvNN1mF6adGXH9");
 
   const driftClient = await createDriftClient(provider, authorityaddy, "mainnet-beta");
+
+
+  const txSig = await sellSolForUsdc(driftClient);
+  console.log("Transaction signature:", txSig);
+
   
+  /*
   // BUY 0.1 SOL WITH USDC
   const oraclePrice = driftClient.getOracleDataForSpotMarket(1).price;
   console.log("oraclePrice", oraclePrice.toString());
@@ -139,7 +235,8 @@ const orderParams2 = {
 	auctionEndPrice: auctionEndPrice,
 	auctionDuration: auctionDuration,
 	};
-	await driftClient.placeSpotOrder(orderParams2)
+	const txSig = await driftClient.placeSpotOrder(orderParams2)
+  console.log("Transaction signature:", txSig);*/
 
 
   /*
