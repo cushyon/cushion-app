@@ -64,6 +64,36 @@ export function initProvider(): AnchorProvider {
   });
 }
 
+/* Quick‐start helper — returns a ready-to-use {@link DriftClient} with *sane* defaults.
+ *
+ * @param provider An {@link AnchorProvider} (see {@link initProvider}).
+ * @param authority The authority key to use for the drift client.
+ * @param env      Cluster to connect to – defaults to `'mainnet-beta'`.
+ *
+ * Internally it uses:
+ *  • `authority = provider.wallet.publicKey`
+ *  • one sub-account (`[0]`, active index `0`)*/
+
+
+export async function createDriftClient(
+  provider: AnchorProvider,
+  authority: PublicKey,
+  env: "mainnet-beta" | "devnet"
+): Promise<DriftClient> {
+  const driftClient = new DriftClient({
+    connection: provider.connection,
+    wallet: provider.wallet,
+    env,
+    authority: provider.wallet.publicKey,
+    accountSubscription: { type: "websocket" },
+    subAccountIds: [0],
+    activeSubAccountId: 0,
+  });
+
+  await driftClient.subscribe();
+  return driftClient;
+}
+
 const main = async () => {
   const env = "mainnet-beta";
   const sdkConfig = initialize({ env });
@@ -81,25 +111,9 @@ const main = async () => {
     lamportsBalance / 10 ** 9
   );
 
-  const authorityaddy = new PublicKey(
-    "FTKm3WgS8K5AkDKL9UZnmD12JdhFnvxvNN1mF6adGXH9"
-  );
+  const authorityaddy = new PublicKey("FTKm3WgS8K5AkDKL9UZnmD12JdhFnvxvNN1mF6adGXH9");
 
-  const driftClient = new DriftClient({
-    connection: provider.connection,
-    wallet: provider.wallet,
-    env: "mainnet-beta",
-    accountSubscription: {
-      type: "websocket",
-    },
-    authority: authorityaddy,
-    subAccountIds: [0],
-    activeSubAccountId: 0,
-  });
-
-  await driftClient.subscribe();
-
-
+  const driftClient = await createDriftClient(provider, authorityaddy, "mainnet-beta");
   
   // BUY 0.1 SOL WITH USDC
   const oraclePrice = driftClient.getOracleDataForSpotMarket(1).price;
