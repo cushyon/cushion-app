@@ -84,7 +84,7 @@ export async function createDriftClient(
     connection: provider.connection,
     wallet: provider.wallet,
     env,
-    authority: provider.wallet.publicKey,
+    authority: authority,
     accountSubscription: { type: "websocket" },
     subAccountIds: [0],
     activeSubAccountId: 0,
