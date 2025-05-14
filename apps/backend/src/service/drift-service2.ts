@@ -46,8 +46,8 @@ const main = async () => {
   const env = "mainnet-beta";
   const sdkConfig = initialize({ env });
 
-  console.log("env anc", process.env.ANCHOR_WALLET);
-  console.log("env", process.env);
+  console.log("env anch", process.env.ANCHOR_WALLET);
+  //console.log("env", process.env);
 
   // const keypairBytes = bs58.decode(process.env.WALLET_PRIVATE_KEY || "");
   // const keypair = Keypair.fromSecretKey(keypairBytes);
@@ -99,8 +99,10 @@ const main = async () => {
 
   await driftClient.subscribe();
 
+
+  /*
   // BUY 0.1 SOL WITH USDC
-  /*const oraclePrice = driftClient.getOracleDataForSpotMarket(1).price;
+  const oraclePrice = driftClient.getOracleDataForSpotMarket(1).price;
   console.log("oraclePrice", oraclePrice.toString());
 	// assuming oraclePrice is a BN with PRICE_PRECISION = 1e6
 	const BASIS_POINTS = 10000;
@@ -123,12 +125,41 @@ const orderParams2 = {
 	auctionEndPrice: auctionEndPrice,
 	auctionDuration: auctionDuration,
 	};
-	await driftClient.placeSpotOrder(orderParams2)
-	*/
+	await driftClient.placeSpotOrder(orderParams2)*/
+
+
+  
+  // SELL 0.1 SOL FOR USDC
+  const oraclePrice = driftClient.getOracleDataForSpotMarket(1).price;
+  console.log("oraclePrice", oraclePrice.toString());
+  // assuming oraclePrice is a BN with PRICE_PRECISION = 1e6
+  const BASIS_POINTS = 10000;
+  const offsetBps = 10; // 0.1% = 10bps
+
+  // Calculate ±0.1% (10 bps)
+  const auctionStartPrice = oraclePrice.muln(BASIS_POINTS + offsetBps).divn(BASIS_POINTS);
+  const auctionEndPrice = oraclePrice.muln(BASIS_POINTS - offsetBps).divn(BASIS_POINTS);
+  const auctionDuration = 30; // 30 slots
+
+  console.log("auctionStartPrice", auctionStartPrice.toString());
+  console.log("auctionEndPrice", auctionEndPrice.toString())
+
+const orderParams2 = {
+  orderType: OrderType.MARKET,
+  baseAssetAmount: driftClient.convertToPerpPrecision(0.1), // USDC -> 0.1 SOL
+  direction: PositionDirection.SHORT,
+  marketIndex: 1,
+  auctionStartPrice: auctionStartPrice,
+  auctionEndPrice: auctionEndPrice,
+  auctionDuration: auctionDuration,
+  };
+  const txSig = await driftClient.placeSpotOrder(orderParams2);
+  console.log("Transaction signature:", txSig);
+	
 
   // BUY  USDC WITH SOL
 
-  const oraclePrice = driftClient.getOracleDataForSpotMarket(1).price;
+  /*const oraclePrice = driftClient.getOracleDataForSpotMarket(1).price;
   console.log("oraclePrice", oraclePrice.toString());
   // assuming oraclePrice is a BN with PRICE_PRECISION = 1e6
   const BASIS_POINTS = 10000;
@@ -149,13 +180,13 @@ const orderParams2 = {
   const orderParams2 = {
     orderType: OrderType.MARKET,
     baseAssetAmount: driftClient.convertToPerpPrecision(0.1), // 0.01 SOL -> USDC
-    direction: PositionDirection.SHORT, // SOL -> USDC
+    direction: PositionDirection.LONG, // SOL -> USDC
     marketIndex: 1,
     auctionStartPrice: auctionStartPrice,
     auctionEndPrice: auctionEndPrice,
     auctionDuration: auctionDuration,
   };
-  await driftClient.placeSpotOrder(orderParams2);
+  await driftClient.placeSpotOrder(orderParams2);*/
 
   // PERP SHORT 55 SOL WORKING
   /*const orderParams = {

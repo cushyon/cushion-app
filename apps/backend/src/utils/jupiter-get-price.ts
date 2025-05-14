@@ -16,7 +16,7 @@ const jupiterPriceResponseSchema = z.object({
 });
 
 export async function fetchJupiterTokenPrice(tokenMint: string) {
-  const url = `https://api.jup.ag/price/v2?ids=${tokenMint}`;
+  const url = `https://lite-api.jup.ag/price/v2?ids=${tokenMint}`;
   const response = await axios.get(url);
   const data = jupiterPriceResponseSchema.parse(response.data);
   return data.data[tokenMint].price;
@@ -26,7 +26,7 @@ export async function fetchJupiterTokenPriceVersusToken(
   tokenMint: string,
   tokenToCompare: string
 ) {
-  const url = `https://api.jup.ag/price/v2?ids=${tokenMint}&vsToken=${tokenToCompare}`;
+  const url = `https://lite-api.jup.ag.ag/price/v2?ids=${tokenMint}&vsToken=${tokenToCompare}`;
   const response = await axios.get(url);
   return response.data;
 }
