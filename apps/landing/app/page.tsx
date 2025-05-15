@@ -44,7 +44,7 @@ export default function Home() {
             </h1>
             <p className="text-gray-400 text-lg md:text-xl max-w-xl">
               Cushion brings capital-protected strategies to DeFi, offering
-              high-yield solutions with advanced risk management
+              high-return solutions with advanced risk management
             </p>
 
             <Card className="w-full max-w-sm bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border-0 p-6 rounded-xl shadow-xl">
