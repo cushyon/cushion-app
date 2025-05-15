@@ -8,10 +8,10 @@ import { updateTradeExecutionData } from "./service/update-trade-execution-data.
 
 const app: Express = express();
 
-// Middleware pour parser le JSON
+// Middleware to parse JSON
 app.use(express.json());
 
-// Route de test
+// Test route
 app.get("/api/get-asset-pair-price", async (req: Request, res: Response) => {
   const { asset1, asset2 } = req.body;
   const price = await getAssetPairPrice(asset1, asset2);
