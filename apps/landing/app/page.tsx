@@ -27,7 +27,7 @@ export default function Home() {
           >
             Resources
           </Link>
-          <Link href="https://app.cushion.trade">
+          <Link href="https://app.cushion.trade/vaults/FTKm3WgS8K5AkDKL9UZnmD12JdhFnvxvNN1mF6adGXH9">
             <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6">
               Launch app
             </Button>
@@ -40,7 +40,7 @@ export default function Home() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
-              Quantitative strategies for performance and yield
+              Quantitative strategies for performance
             </h1>
             <p className="text-gray-400 text-lg md:text-xl max-w-xl">
               Cushion brings capital-protected strategies to DeFi, offering
