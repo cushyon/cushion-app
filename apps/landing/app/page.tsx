@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
 
@@ -14,10 +15,13 @@ export default function Home() {
       {/* Header */}
       <header className="relative z-10 flex items-center justify-between px-6 py-6 md:px-12">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-white rounded-sm flex items-center justify-center">
-            <div className="w-2 h-2 bg-black rounded-full" />
-          </div>
-          <span className="text-white text-xl font-bold">CUSHION</span>
+          <Image
+            src="/logo_white.svg"
+            width={280}
+            height={80}
+            priority
+            alt="Cushion logo"
+          />
         </div>
 
         <div className="flex items-center gap-6">
