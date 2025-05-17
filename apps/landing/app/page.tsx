@@ -51,22 +51,25 @@ export default function Home() {
               high-return solutions with advanced risk management
             </p>
 
-            <Card className="w-full max-w-sm bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border-0 p-6 rounded-xl shadow-xl">
-              <div className="space-y-4">
-                <p className="text-gray-400 font-medium">TVL</p>
-                <div className="flex items-end gap-2">
-                  <span className="text-5xl font-bold text-white">5.00</span>
-                  <span className="text-4xl font-bold text-gray-500 mb-1">
-                    M
-                  </span>
+            <div className="mt-15">
+              <Card className="w-full max-w-sm bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border-0 p-6 rounded-xl shadow-xl">
+                <div className="space-y-4">
+                  <div className="flex flex-col items-start gap-2">
+                    <span className="text-xl text-gray-200">
+                      Simple, optimized, non-custodial
+                    </span>
+                    <span className="text-xl text-gray-200">vaults</span>
+                  </div>
+                  <div className="pt-2">
+                    <Link href="https://app.cushion.trade/vaults/FTKm3WgS8K5AkDKL9UZnmD12JdhFnvxvNN1mF6adGXH9">
+                      <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-8 w-full sm:w-auto">
+                        Earn
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
-                <div className="pt-2">
-                  <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-8 w-full sm:w-auto">
-                    Earn
-                  </Button>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </div>
           </div>
 
           <div className="hidden md:block">
