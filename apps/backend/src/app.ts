@@ -1,5 +1,4 @@
 import express, { Express, Request, Response } from "express";
-import "./cron/rebalance";
 import { rebalance } from "./utils/rebalance";
 import { getAssetPairPrice } from "./service/get-asset-pair-price.service";
 import { getAssetQuantity } from "./service/get-asset-quantity.service";
