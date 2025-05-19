@@ -31,6 +31,9 @@ import {
   BN,
 } from "@drift-labs/sdk";
 import { Public } from "@prisma/client/runtime/library";
+import { getTokenAccountData } from "@src/utils/get-token-account-data";
+import { getTokenAccount } from "@src/utils/get-token-account";
+import { getCurrentBalanceInUSD } from "@src/utils/get-balance-in-usd";
 
 export const getTokenAddress = (
   mintAddress: string,
@@ -74,7 +77,6 @@ export function initProvider(): AnchorProvider {
  *  • `authority = provider.wallet.publicKey`
  *  • one sub-account (`[0]`, active index `0`)*/
 
-
 export async function createDriftClient(
   provider: AnchorProvider,
   authority: PublicKey,
@@ -109,7 +111,6 @@ function deriveAuctionBand({
   };
 }
 
-
 export async function buySolWithUsdc(
   driftClient: DriftClient,
   {
@@ -140,8 +141,6 @@ export async function buySolWithUsdc(
   return driftClient.placeSpotOrder(params);
 }
 
-
-
 export async function sellSolForUsdc(
   driftClient: DriftClient,
   {
@@ -157,7 +156,10 @@ export async function sellSolForUsdc(
   } = {}
 ): Promise<string> {
   const oraclePrice = driftClient.getOracleDataForSpotMarket(marketIndex).price;
-  const { start: end, end: start } = deriveAuctionBand({ oraclePrice, offsetBps });
+  const { start: end, end: start } = deriveAuctionBand({
+    oraclePrice,
+    offsetBps,
+  });
 
   const params = {
     orderType: OrderType.MARKET,
@@ -189,13 +191,23 @@ const main = async () => {
     lamportsBalance / 10 ** 9
   );
 
-  const authorityaddy = new PublicKey("FTKm3WgS8K5AkDKL9UZnmD12JdhFnvxvNN1mF6adGXH9");
+  const authorityaddy = new PublicKey(
+    "FTKm3WgS8K5AkDKL9UZnmD12JdhFnvxvNN1mF6adGXH9"
+  );
 
-  const driftClient = await createDriftClient(provider, authorityaddy, "mainnet-beta");
+  const driftClient = await createDriftClient(
+    provider,
+    authorityaddy,
+    "mainnet-beta"
+  );
 
+  const user = driftClient.getUser();
+  // console.log("user", user);
+  const tokenAmount = user.getTokenAmount(0);
+  console.log("tokenAmount", tokenAmount.toString());
 
-  const txSig = await sellSolForUsdc(driftClient);
-  console.log("Transaction signature:", txSig);
+  // const txSig = await buySolWithUsdc(driftClient);
+  // console.log("Transaction signature:", txSig);
 
   // Documentation driftClient: https://github.com/drift-labs/protocol-v2/blob/cc75694a819de89635973e8ac62259f94529f260/sdk/src/driftClient.ts#L4606
   // BUY  USDC WITH SOL

@@ -1,6 +1,5 @@
 import "dotenv/config";
 import app from "./app";
-import "./service/drift-service";
 
 // Test if environment variables are loaded
 console.log("Environment variables loaded:", {
