@@ -7,6 +7,14 @@ This organisation currently use 6 repos to run cushion.trade:
 - Backtesting: a repo with all backtests
 - datascripts: Scripts to collect data for backtests
 
+# How to run the backend in localhost:
+
+- run python poetry run uvicorn main:app --reload in the python_backend repo
+
+- run the node backend in a second terminal (pnpm backend:build, then sh ./railway-start)
+
+- Trigger the python scripts tasks in a third terminal : curl -X POST http://localhost:8000/trigger-task
+
 # How does the backend works
 
 when cron executes (16h), call API node backend. 

@@ -64,35 +64,40 @@ export const rebalanceWithDrift = async (
   const formattedOraclePriceAsset1 = Number(oraclePriceAsset1.price) / 10 ** 6;
   const formattedOraclePriceAsset2 = Number(oraclePriceAsset2.price) / 10 ** 6;
 
+  // Fetch portfolio Assets balance
   const tokenAmountAsset1 = user.getTokenAmount(asset1Data.marketIndex);
   const tokenAmountAsset2 = user.getTokenAmount(asset2Data.marketIndex);
 
+  // Format the token amount in human readable format
   const formattedTokenAmountAsset1 =
     Number(tokenAmountAsset1) / 10 ** asset1Data.decimals;
   const formattedTokenAmountAsset2 =
     Number(tokenAmountAsset2) / 10 ** asset2Data.decimals;
 
+  // Calculate the each asset value in USD
   const amountAsset1InUSD =
     formattedTokenAmountAsset1 * formattedOraclePriceAsset1;
   const amountAsset2InUSD =
     formattedTokenAmountAsset2 * formattedOraclePriceAsset2;
 
+  // Calculate the total NAV value in USD
   const totalAmountInUSD = amountAsset1InUSD + amountAsset2InUSD;
 
   console.log("totalAmountInUSD", totalAmountInUSD);
   console.log("amountAsset1InUSD", amountAsset1InUSD.toString());
   console.log("amountAsset2InUSD", amountAsset2InUSD.toString());
 
+  // Calculate the current percentage of each asset in the portfolio
   const currentPercentageAsset1 = (amountAsset1InUSD / totalAmountInUSD) * 100;
   const currentPercentageAsset2 = (amountAsset2InUSD / totalAmountInUSD) * 100;
 
   console.log("current percentageAsset1", currentPercentageAsset1);
   console.log("current percentageAsset2", currentPercentageAsset2);
 
-  const tolerance = 2; // 2% tolerance
+  const tolerance = 1; // 1% tolerance, if variation above 1%, rebalance. Check and add control for min amount possible to swap
   if (Math.abs(currentPercentageAsset1 - percentageAsset1) <= tolerance) {
     console.log("No need to rebalance - within tolerance range");
-    return {
+    return { //if no need to rebalance, return success
       status: "success",
       txSig: null,
       currentPercentageAsset1,
