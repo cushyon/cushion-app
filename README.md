@@ -1,4 +1,4 @@
-# cuhsyon organization repo
+# cuhsyon organization repos
 This organisation currently use 6 repos to run cushion.trade:
 - Python_backend: A python backend that executes the trades
 - Cushion-app: A Monorepo with a node backend and the landing page (dapp hosted in VaultUI due to difficulties to integraft the Vault UI)
@@ -17,14 +17,14 @@ This organisation currently use 6 repos to run cushion.trade:
 
 # How does the backend works
 
-when cron executes (16h), call API node backend. 
-Fetch price of 2 assets and our portfolio.
+Execute cron, call API node backend. 
+Fetch price of 2 assets and portfolio.
 save NAV in DB
-call function calculating CPPI
+call function executing strategy
 new quantity
-convert ot %
+convert to %
 Send to node backend
-execute with jupiter API
+execute with Vault delegate
 
 
 # Turborepo + Prisma ORM starter
