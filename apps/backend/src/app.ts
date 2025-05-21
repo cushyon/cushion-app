@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express, Request, Response, RequestHandler } from "express";
 // import { rebalance } from "./utils/rebalance";
 import { getAssetPairPrice } from "./service/get-asset-pair-price.service";
 import {
@@ -19,22 +19,42 @@ const app: Express = express();
 app.use(express.json());
 
 // Test route
-app.get("/api/get-asset-pair-price", async (req: Request, res: Response) => {
-  const { asset1, asset2 } = req.body;
-  const price = await getAssetPairPrice(asset1, asset2);
-  res.json({ price });
-});
+app.get("/api/get-asset-pair-price", (async (req: Request, res: Response) => {
+  try {
+    const { asset1, asset2 } = req.query;
+    if (!asset1 || !asset2) {
+      return res
+        .status(400)
+        .json({ error: "asset1 and asset2 are required as query parameters" });
+    }
+    const price = await getAssetPairPrice(asset1 as string, asset2 as string);
+    res.json({ price });
+  } catch (error) {
+    console.error("Error in get-asset-pair-price:", error);
+    res.status(500).json({ error: "Failed to get asset pair price" });
+  }
+}) as RequestHandler);
 
-app.get("/api/trade-execution-data", async (req: Request, res: Response) => {
-  console.log("Entering trade-execution-data");
-  const { name, risky_asset, safe_asset } = req.query;
-  const tradeExecutionData = await getTradeExecutionData(
-    name as string,
-    risky_asset as string,
-    safe_asset as string
-  );
-  res.json({ tradeExecutionData });
-});
+app.get("/api/trade-execution-data", (async (req: Request, res: Response) => {
+  try {
+    console.log("Entering trade-execution-data");
+    const { name, risky_asset, safe_asset } = req.query;
+    if (!name || !risky_asset || !safe_asset) {
+      return res
+        .status(400)
+        .json({ error: "name, risky_asset, and safe_asset are required" });
+    }
+    const tradeExecutionData = await getTradeExecutionData(
+      name as string,
+      risky_asset as string,
+      safe_asset as string
+    );
+    res.json({ tradeExecutionData });
+  } catch (error) {
+    console.error("Error in trade-execution-data:", error);
+    res.status(500).json({ error: "Failed to get trade execution data" });
+  }
+}) as RequestHandler);
 
 app.get(
   "/api/get-asset-quantity/:asset1/:asset2",
