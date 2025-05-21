@@ -26,6 +26,7 @@ app.get("/api/get-asset-pair-price", async (req: Request, res: Response) => {
 });
 
 app.get("/api/trade-execution-data", async (req: Request, res: Response) => {
+  console.log("Entering trade-execution-data");
   const { name, risky_asset, safe_asset } = req.query;
   const tradeExecutionData = await getTradeExecutionData(
     name as string,
@@ -47,6 +48,7 @@ app.get(
 app.get(
   "/price-and-quantity/:asset1/:asset2",
   async (req: Request, res: Response) => {
+    console.log("Entering price-and-quantity");
     const { asset1, asset2 } = req.params;
     if (!asset1 || !asset2) {
       throw new Error("Asset1 and asset2 are required");
@@ -58,6 +60,7 @@ app.get(
 );
 
 app.post("/api/rebalance", async (req: Request, res: Response) => {
+  console.log("Entering rebalance");
   try {
     const { id, percentageAsset1, percentageAsset2 } = req.body;
     console.log("percentageAsset1", percentageAsset1);
@@ -102,9 +105,6 @@ app.post(
   }
 );
 
-// rebalance({
-//   percentageAsset1: 70,
-//   percentageAsset2: 30,
-// });
+rebalanceWithDrift(SOL.address, USDC.address, 70, 30);
 
 export default app;
