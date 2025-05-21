@@ -97,7 +97,8 @@ export const rebalanceWithDrift = async (
   const tolerance = 1; // 1% tolerance, if variation above 1%, rebalance. Check and add control for min amount possible to swap
   if (Math.abs(currentPercentageAsset1 - percentageAsset1) <= tolerance) {
     console.log("No need to rebalance - within tolerance range");
-    return { //if no need to rebalance, return success
+    return {
+      //if no need to rebalance, return success
       status: "success",
       txSig: null,
       currentPercentageAsset1,
@@ -135,7 +136,7 @@ export const rebalanceWithDrift = async (
 
     console.log("amount to swap", amountToSwap);
     const txSig = await sellSolForUsdc(driftClient, {
-      amountSol: amountToSwap,
+      amountSol: amountToSwap < 0 ? formattedTokenAmountAsset1 : amountToSwap,
     });
     console.log("Transaction signature:", txSig);
     return {
@@ -162,7 +163,9 @@ export const rebalanceWithDrift = async (
       Number(formattedTokenAmountAsset2) - amountExpectedAsset2;
 
     const amountToSwapInSOL =
-      Number(amountToSwap) / Number(formattedOraclePriceAsset1);
+      amountToSwap < 0
+        ? formattedTokenAmountAsset2
+        : Number(amountToSwap) / Number(formattedOraclePriceAsset1);
 
     console.log("amount to swap in sol", amountToSwapInSOL);
     const txSig = await buySolWithUsdc(driftClient, {
