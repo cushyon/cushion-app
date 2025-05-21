@@ -105,6 +105,6 @@ app.post(
   }
 );
 
-rebalanceWithDrift(SOL.address, USDC.address, 70, 30);
+// rebalanceWithDrift(SOL.address, USDC.address, 70, 30);
 
 export default app;
