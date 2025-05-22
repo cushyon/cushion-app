@@ -1,3 +1,7 @@
+## Note on this app
+dApp code was moved to the UIVault repo due to time constraints to integrate dense front end integrations of the vault's program within this monorepo.
+The code in this app is deprecated, not deployed in prod.
+
 ## Getting Started
 
 First, run the development server:
