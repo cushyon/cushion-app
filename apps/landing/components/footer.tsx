@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { X } from "lucide-react";
+import { SiX } from "react-icons/si";
 import { Logo } from "./ui/logo";
 
 export function Footer() {
@@ -9,7 +9,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
           <div className="md:col-span-6">
             <div className="flex items-center mb-6">
-              <Logo className="h-10 w-auto" size={140} />
+              <Logo className="h-10 w-auto" size={280} />
             </div>
 
             <div className="mt-12">
@@ -18,7 +18,7 @@ export function Footer() {
                 href="https://x.com/cushiondottrade"
                 className="inline-block"
               >
-                <X className="w-6 h-6" />
+                <SiX className="w-6 h-6" />
                 <span className="sr-only">Y</span>
               </Link>
             </div>
