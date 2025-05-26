@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export function Logo({ className = "", size = 160 }) {
+export function Logo({ className = "", size = 280 }) {
   return (
     <Image
       src="/logo_white.svg"

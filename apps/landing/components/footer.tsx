@@ -6,20 +6,19 @@ export function Footer() {
   return (
     <footer className="w-full bg-[#123FFC] text-white py-12 px-4 md:px-6 lg:px-8">
       <div className="container mx-auto max-w-7xl">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-          <div className="md:col-span-6">
-            <div className="flex items-center mb-6">
-              <Logo className="h-10 w-auto" size={280} />
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-0">
+          <div className="md:col-span-6 flex flex-col gap-0">
+            {/* 1️⃣ Logo — pull it left only (no translate-y) */}
+            <Logo size={280} className="-ml-14 translate-x-3 -translate-y-6" />
 
-            <div className="mt-12">
-              <p className="text-lg mb-4">Join our community</p>
+            {/* 2️⃣ Community block sits immediately below */}
+            <div className="flex flex-col gap-3">
+              <p className="text-lg leading-tight">Join the community</p>
               <Link
                 href="https://x.com/cushiondottrade"
                 className="inline-block"
               >
                 <SiX className="w-6 h-6" />
-                <span className="sr-only">Y</span>
               </Link>
             </div>
           </div>
