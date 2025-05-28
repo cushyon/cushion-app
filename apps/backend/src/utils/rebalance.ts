@@ -19,14 +19,13 @@ const PAIR = `${ASSET1}-${ASSET2}`;
 
 const PUBLIC_KEY = "8JJCtexL5QTc4jnLztHNT4dKLSNhswuYwmR4gVvJZwAh";
 
-// Connection à la blockchain Solana (mainnet)
 const connection = new Connection("https://api.mainnet-beta.solana.com");
 
 export const getBalance = async (address: string) => {
   try {
     const publicKey = new PublicKey(address);
     const balance = await connection.getBalance(publicKey);
-    // Convertir les lamports en SOL (1 SOL = 1,000,000,000 lamports)
+    // Convert lamports to SOL (1 SOL = 1,000,000,000 lamports)
     return balance / 1_000_000_000;
   } catch (error) {
     console.error("Error fetching balance:", error);
@@ -49,9 +48,6 @@ export const rebalance = async ({
   percentageAsset1: number;
   percentageAsset2: number;
 }) => {
-  const adminWallet = Keypair.fromSecretKey(
-    bs58.decode(process.env.WALLET_PRIVATE_KEY as string)
-  );
   const amountAsset1InUSd = await getCurrentBalanceInUSD(ASSET1, PUBLIC_KEY);
   const amountInUSD2 = await getCurrentBalanceInUSD(ASSET2, PUBLIC_KEY);
 
@@ -105,7 +101,6 @@ export const rebalance = async ({
 
       console.log("amount to swap", amountToSwap);
 
-      // => swap function
       const signature = await swap(ASSET1, ASSET2, amountToSwap);
       console.log("signature", signature);
     } else {
@@ -129,7 +124,6 @@ export const rebalance = async ({
 
       console.log("amount to swap", amountToSwap);
 
-      // => swap function
       const signature = await swap(ASSET1, ASSET2, amountToSwap);
       console.log("signature", signature);
     }
@@ -151,7 +145,6 @@ export const rebalance = async ({
 
     console.log("amount to swap", amountToSwap);
 
-    // => swap function
     const signature = await swap(ASSET2, ASSET1, amountToSwap);
     console.log("signature", signature);
   }
