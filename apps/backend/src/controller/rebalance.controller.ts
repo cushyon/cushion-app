@@ -1,10 +1,7 @@
 import { updateTradeExecutionData } from "@src/service/update-trade-execution-data.service";
 import { Request, Response } from "express";
-import {
-  rebalanceWithDrift,
-  SOL,
-  USDC,
-} from "../service/rebalance-with-drift.service";
+import { rebalanceWithDrift } from "../service/rebalance-with-drift.service";
+import { SOL, USDC } from "../lib/tokens";
 import {
   writeLog,
   updateLastRow,
