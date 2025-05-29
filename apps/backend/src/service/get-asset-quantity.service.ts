@@ -1,7 +1,6 @@
 import { PublicKey } from "@solana/web3.js";
-import { createDriftClient } from "./drift-service";
 import { getTokenAccountData } from "../utils/get-token-account-data";
-import { initProvider } from "./drift-service";
+import { createDriftClient, initProvider } from "./drift.service";
 import { initialize } from "@drift-labs/sdk";
 import { SOL, USDC, getAssetData } from "./rebalance-with-drift.service";
 

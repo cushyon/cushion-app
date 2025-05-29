@@ -4,7 +4,7 @@ import {
   createDriftClient,
   initProvider,
   sellSolForUsdc,
-} from "./drift-service";
+} from "./drift.service";
 import { initialize } from "@drift-labs/sdk";
 
 export const USDC = {
