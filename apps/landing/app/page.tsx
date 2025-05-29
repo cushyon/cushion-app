@@ -58,7 +58,6 @@ export default function Home() {
                     <span className="text-xl text-gray-200">
                       Internet capital protected markets
                     </span>
-                    <span className="text-xl text-gray-200">vaults</span>
                   </div>
                   <div className="pt-2">
                     <Link href="https://app.cushion.trade/vaults/FTKm3WgS8K5AkDKL9UZnmD12JdhFnvxvNN1mF6adGXH9">
