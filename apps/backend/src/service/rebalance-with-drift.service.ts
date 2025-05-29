@@ -1,5 +1,4 @@
-import { PublicKey, Connection, Keypair } from "@solana/web3.js";
-import bs58 from "bs58";
+import { PublicKey } from "@solana/web3.js";
 import {
   buySolWithUsdc,
   createDriftClient,

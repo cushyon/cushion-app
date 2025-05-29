@@ -1,39 +1,14 @@
 import * as anchor from "@coral-xyz/anchor";
 import { getAssociatedTokenAddress } from "@solana/spl-token";
-import bs58 from "bs58";
-import { AnchorProvider, Program, Provider } from "@coral-xyz/anchor";
-import { IDL, VAULT_PROGRAM_ID, VaultClient } from "@drift-labs/vaults-sdk";
-import {
-  Keypair,
-  PublicKey,
-  type TransactionInstruction,
-  ComputeBudgetProgram,
-} from "@solana/web3.js";
+import { AnchorProvider } from "@coral-xyz/anchor";
+import { PublicKey } from "@solana/web3.js";
 import {
   DriftClient,
   PositionDirection,
   OrderType,
-  User,
-  getUserAccountPublicKeySync,
   initialize,
-  BulkAccountLoader,
-  DRIFT_PROGRAM_ID,
-  getOrderParams,
-  getLimitOrderParams,
-  MarketType,
-  PostOnlyParams,
-  PRICE_PRECISION,
-  BASE_PRECISION,
-  PerpMarkets,
-  calculateBidAskPrice,
-  convertToNumber,
-  getMarketOrderParams,
   BN,
 } from "@drift-labs/sdk";
-import { Public } from "@prisma/client/runtime/library";
-import { getTokenAccountData } from "@src/utils/get-token-account-data";
-import { getTokenAccount } from "@src/utils/get-token-account";
-import { getCurrentBalanceInUSD } from "@src/utils/get-balance-in-usd";
 
 export const getTokenAddress = (
   mintAddress: string,
