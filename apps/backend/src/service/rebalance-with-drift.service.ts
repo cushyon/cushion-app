@@ -1,12 +1,6 @@
-import { PublicKey } from "@solana/web3.js";
-import {
-  buySolWithUsdc,
-  createDriftClient,
-  initProvider,
-  sellSolForUsdc,
-} from "./drift.service";
-import { initialize } from "@drift-labs/sdk";
+import { buySolWithUsdc, sellSolForUsdc } from "./drift.service";
 import { USDC, SOL } from "../lib/tokens";
+import { initDrift } from "@src/utils/init-drift";
 
 export const getAssetData = (asset: string) => {
   if (asset === SOL.address) return SOL;
@@ -20,23 +14,7 @@ export const rebalanceWithDrift = async (
   percentageAsset1: number,
   percentageAsset2: number
 ) => {
-  // Initialize drift sdk
-  const env = "mainnet-beta";
-  const sdkConfig = initialize({ env });
-
-  const provider = initProvider();
-
-  const authorityaddy = new PublicKey(
-    "FTKm3WgS8K5AkDKL9UZnmD12JdhFnvxvNN1mF6adGXH9"
-  );
-
-  const driftClient = await createDriftClient(
-    provider,
-    authorityaddy,
-    "mainnet-beta"
-  );
-
-  const user = driftClient.getUser();
+  const { driftClient, user } = await initDrift();
 
   // Get the price of the asset1 and asset2
   const asset1Data = getAssetData(asset1);
