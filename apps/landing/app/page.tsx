@@ -56,7 +56,7 @@ export default function Home() {
                 <div className="space-y-4">
                   <div className="flex flex-col items-start gap-2">
                     <span className="text-xl text-gray-200">
-                      Simple, optimized, non-custodial
+                      Internet capital protected markets
                     </span>
                     <span className="text-xl text-gray-200">vaults</span>
                   </div>
