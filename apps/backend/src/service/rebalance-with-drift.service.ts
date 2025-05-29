@@ -1,6 +1,8 @@
 import { buySolWithUsdc, sellSolForUsdc } from "./drift.service";
 import { USDC, SOL } from "../lib/tokens";
 import { initDrift } from "@src/utils/init-drift";
+import { swapSolForUsdc } from "@src/utils/swap-sol-for-usdc";
+import { swapUsdcForSol } from "@src/utils/swap-usdc-for-sol";
 
 export const getAssetData = (asset: string) => {
   if (asset === SOL.address) return SOL;
@@ -90,62 +92,38 @@ export const rebalanceWithDrift = async (
   console.log("expectedAmountAsset2", expectedAmountAsset2);
 
   if (swapDirection === "asset1ToAsset2") {
-    const amountExpectedAsset1 = Number(
-      expectedAmountAsset1 / Number(formattedOraclePriceAsset1)
+    const swapResult = await swapSolForUsdc(
+      driftClient,
+      formattedTokenAmountAsset1,
+      formattedOraclePriceAsset1,
+      expectedAmountAsset1
     );
-
-    console.log("current amount asset1", formattedTokenAmountAsset1);
-    console.log("amount expected asset1", Number(amountExpectedAsset1));
-
-    const amountToSwap =
-      Number(formattedTokenAmountAsset1) - amountExpectedAsset1;
-
-    console.log("amount to swap", amountToSwap);
-    const txSig = await sellSolForUsdc(driftClient, {
-      amountSol: amountToSwap < 0 ? formattedTokenAmountAsset1 : amountToSwap,
-    });
-    console.log("Transaction signature:", txSig);
     return {
       status: "success",
-      txSig,
+      txSig: swapResult.txSig,
       currentPercentageAsset1,
       currentPercentageAsset2,
       swapDirection,
-      amountToSwap,
-      amountToSwapInSOL: amountToSwap,
+      amountToSwap: swapResult.amountToSwap,
+      amountToSwapInSOL: swapResult.amountToSwapInSOL,
       totalAmountInUSD,
     };
   } else {
-    const amountExpectedAsset2 = Number(
-      expectedAmountAsset2 / Number(formattedOraclePriceAsset2)
+    const swapResult = await swapUsdcForSol(
+      driftClient,
+      formattedOraclePriceAsset1,
+      formattedOraclePriceAsset2,
+      formattedTokenAmountAsset2,
+      expectedAmountAsset2
     );
-
-    console.log("amountExpectedAsset2", amountExpectedAsset2);
-
-    console.log("current amount asset2", formattedTokenAmountAsset2);
-    console.log("amount expected asset2", amountExpectedAsset2);
-
-    const amountToSwap =
-      Number(formattedTokenAmountAsset2) - amountExpectedAsset2;
-
-    const amountToSwapInSOL =
-      amountToSwap < 0
-        ? formattedTokenAmountAsset2
-        : Number(amountToSwap) / Number(formattedOraclePriceAsset1);
-
-    console.log("amount to swap in sol", amountToSwapInSOL);
-    const txSig = await buySolWithUsdc(driftClient, {
-      amountSol: amountToSwapInSOL,
-    });
-    console.log("Transaction signature:", txSig);
     return {
       status: "success",
-      txSig,
+      txSig: swapResult.txSig,
       currentPercentageAsset1,
       currentPercentageAsset2,
       swapDirection,
-      amountToSwap,
-      amountToSwapInSOL,
+      amountToSwap: swapResult.amountToSwap,
+      amountToSwapInSOL: swapResult.amountToSwapInSOL,
       totalAmountInUSD,
     };
   }
