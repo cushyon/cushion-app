@@ -1,7 +1,7 @@
 # cuhsyon organization repos
 This organisation currently use 6 repos to run cushion.trade:
 - Python_backend: A python backend that executes the trades
-- Cushion-app: A Monorepo with a node backend and the landing page (dapp hosted in VaultUI due to difficulties to integraft the Vault UI)
+- Cushion-app: A Monorepo with a node backend and the landing page (dapp hosted in VaultUI due to time constraints to integrate the Vault UI)
 - DeployVault: The programs and clients to deploy a Vault
 - UIVault: The UI of the dApp
 - Backtesting: a repo with all backtests
