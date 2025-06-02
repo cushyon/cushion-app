@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SiX } from "react-icons/si";
+import { SiX, SiTelegram } from "react-icons/si";
 import { Logo } from "./ui/logo";
 
 export function Footer() {
@@ -14,12 +14,20 @@ export function Footer() {
             {/* 2️⃣ Community block sits immediately below */}
             <div className="flex flex-col gap-3">
               <p className="text-lg leading-tight">Join the community</p>
-              <Link
-                href="https://x.com/cushiondottrade"
-                className="inline-block"
-              >
-                <SiX className="w-6 h-6" />
-              </Link>
+              <div className="flex gap-4">
+                <Link
+                  href="https://x.com/cushiondottrade"
+                  className="inline-block"
+                >
+                  <SiX className="w-6 h-6" />
+                </Link>
+                <Link
+                  href="https://t.me/+y6vY0cHU-OY2YmE0"
+                  className="inline-block"
+                >
+                  <SiTelegram className="w-6 h-6" />
+                </Link>
+              </div>
             </div>
           </div>
           <div className="md:col-span-3">
