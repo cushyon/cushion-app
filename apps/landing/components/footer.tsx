@@ -39,7 +39,10 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:underline">
+                <Link
+                  href="https://github.com/cushyon"
+                  className="hover:underline"
+                >
                   Github
                 </Link>
               </li>
