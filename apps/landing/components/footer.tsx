@@ -57,7 +57,10 @@ export function Footer() {
             <h3 className="text-xl font-medium mb-6">Company</h3>
             <ul className="space-y-4">
               <li>
-                <Link href="#" className="hover:underline">
+                <Link
+                  href="https://t.me/+y6vY0cHU-OY2YmE0"
+                  className="hover:underline"
+                >
                   Contact us
                 </Link>
               </li>
