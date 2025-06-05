@@ -29,12 +29,21 @@ export const rebalanceWithDrift = async (
     asset2Data.marketIndex
   );
 
+  console.log("oraclePriceAsset1", oraclePriceAsset1);
+  console.log("oraclePriceAsset2", oraclePriceAsset2);
+
   const formattedOraclePriceAsset1 = Number(oraclePriceAsset1.price) / 10 ** 6;
   const formattedOraclePriceAsset2 = Number(oraclePriceAsset2.price) / 10 ** 6;
+
+  console.log("formattedOraclePriceAsset1", formattedOraclePriceAsset1);
+  console.log("formattedOraclePriceAsset2", formattedOraclePriceAsset2);
 
   // Fetch portfolio Assets balance
   const tokenAmountAsset1 = user.getTokenAmount(asset1Data.marketIndex);
   const tokenAmountAsset2 = user.getTokenAmount(asset2Data.marketIndex);
+
+  console.log("tokenAmountAsset1", tokenAmountAsset1);
+  console.log("tokenAmountAsset2", tokenAmountAsset2);
 
   // Format the token amount in human readable format
   const formattedTokenAmountAsset1 =
