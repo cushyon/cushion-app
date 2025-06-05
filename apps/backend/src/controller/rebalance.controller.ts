@@ -7,6 +7,8 @@ import {
   updateLastRow,
   LogEntry,
 } from "../service/google-sheets.service";
+import { normalisePercents } from "../utils/normalize-percents";
+
 
 export const rebalance = async (req: Request, res: Response) => {
   console.log("Entering rebalance");
@@ -20,9 +22,8 @@ export const rebalance = async (req: Request, res: Response) => {
 
   try {
     // Get the data from the request body
-    const { id, percentageAsset1, percentageAsset2 } = req.body;
-    console.log("percentageAsset1", percentageAsset1);
-    console.log("percentageAsset2", percentageAsset2);
+    let { id, percentageAsset1, percentageAsset2 } = req.body;
+    console.log("percentageAsset1", percentageAsset1, "percentageAsset2", percentageAsset2);
     const log: LogEntry = {
       column: "B",
       value: percentageAsset1,
@@ -32,9 +33,14 @@ export const rebalance = async (req: Request, res: Response) => {
     log.value = percentageAsset2;
     await updateLastRow([log]);
     if (percentageAsset1 + percentageAsset2 !== 100) {
-      console.log("Percentage asset1 and asset2 must be 100");
-      throw new Error("Percentage asset1 and asset2 must be 100");
+      console.log("Percentage asset1 and asset2 must be 100, current value:", percentageAsset1 + percentageAsset2);
+      //send a tg notif instead and round the values throw new Error("Percentage asset1 and asset2 must be 100");
+      const { p1, p2 } = normalisePercents(percentageAsset1, percentageAsset2);
+      percentageAsset1 = p1;
+      percentageAsset2 = p2;
+      console.log("Normalised percentages", percentageAsset1, percentageAsset2);
     }
+    return;
 
     const result = await rebalanceWithDrift(
       SOL.address,
