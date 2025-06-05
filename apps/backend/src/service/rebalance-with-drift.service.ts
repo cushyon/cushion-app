@@ -42,6 +42,9 @@ export const rebalanceWithDrift = async (
   const formattedTokenAmountAsset2 =
     Number(tokenAmountAsset2) / 10 ** asset2Data.decimals;
 
+  console.log("formattedTokenAmountAsset1", formattedTokenAmountAsset1);
+  console.log("formattedTokenAmountAsset2", formattedTokenAmountAsset2);
+
   // Calculate the each asset value in USD
   const amountAsset1InUSD =
     formattedTokenAmountAsset1 * formattedOraclePriceAsset1;
