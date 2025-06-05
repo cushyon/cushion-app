@@ -8,6 +8,13 @@ export const swapUsdcForSol = async (
   formattedOraclePriceAsset2: number,
   expectedAmountAsset2: number
 ) => {
+  console.log("==== Entering swapUsdcForSol ====");
+  console.log("formattedOraclePriceAsset1", formattedOraclePriceAsset1);
+  console.log("formattedTokenAmountAsset2", formattedTokenAmountAsset2);
+  console.log("formattedOraclePriceAsset2", formattedOraclePriceAsset2);
+  console.log("expectedAmountAsset2", expectedAmountAsset2);
+  console.log("==== ====================== ====");
+
   const amountExpectedAsset2 = Number(
     expectedAmountAsset2 / Number(formattedOraclePriceAsset2)
   );
@@ -19,6 +26,8 @@ export const swapUsdcForSol = async (
 
   const amountToSwap =
     Number(formattedTokenAmountAsset2) - amountExpectedAsset2;
+
+  console.log("amount to swap", amountToSwap);
 
   const amountToSwapInSOL =
     amountToSwap < 0
