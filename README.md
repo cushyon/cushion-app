@@ -9,7 +9,7 @@ This organisation currently use 6 repos to run cushion.trade:
 
 # How to run the backend in localhost:
 
-- run python poetry run uvicorn main:app --reload in the python_backend repo
+- run python poetry run uvicorn main:app --reload in the python_backend repo or directly poetry run uvicorn main:app --reload
 
 - run the node backend in a second terminal (pnpm backend:build, then sh ./railway-start)
 
