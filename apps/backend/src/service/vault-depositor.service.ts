@@ -53,15 +53,12 @@ export const initVaultDepositor = async ({
   const depositorWallet = new PublicKey(
     "4aXMMBox8pxMFABgVBg2MCxbFEcgm8cguFA5KRCFA6qf"
   );
-  // const { driftClient, user } = await initDrift();
   const newWallet = createThrowawayIWallet(depositorWallet);
 
   const driftVaultsProgram = getDriftVaultProgram(
     driftClient.connection,
     newWallet
   );
-
-  // console.log("driftVaultsProgram", driftVaultsProgram);
 
   const bulkAccountLoader = new BulkAccountLoader(
     driftClient.connection,
@@ -75,8 +72,6 @@ export const initVaultDepositor = async ({
     new PublicKey("4aXMMBox8pxMFABgVBg2MCxbFEcgm8cguFA5KRCFA6qf")
   );
 
-  // console.log("vaultDepositorPubkey", vaultDepositorPubkey);
-
   const vaultAccount = new VaultAccount(
     driftVaultsProgram,
     new PublicKey("FTKm3WgS8K5AkDKL9UZnmD12JdhFnvxvNN1mF6adGXH9"),
@@ -87,11 +82,6 @@ export const initVaultDepositor = async ({
 
   const vaultAccountData = vaultAccount.getData();
 
-  // console.log("vaultAccountData", vaultAccountData);
-  console.log(
-    "vaultAccountData.totalShares",
-    vaultAccountData.totalShares.toString()
-  );
   const vaultShares = vaultAccountData.totalShares;
 
   const vaultDepositorAccount = new VaultDepositorAccount(
@@ -102,38 +92,13 @@ export const initVaultDepositor = async ({
 
   await vaultDepositorAccount.subscribe();
 
-  console.log("vaultDepositorAccount", vaultDepositorAccount);
-
-  const vaultProgramId = VAULT_PROGRAM_ID;
-  // console.log("vaultProgramId", vaultProgramId);
-
   const vaultDepositorAccountData = vaultDepositorAccount.getData();
 
-  // console.log("vaultDepositorAccountData", vaultDepositorAccountData);
-
-  console.log(
-    "vault depositor net deposit",
-    vaultDepositorAccountData.netDeposits.toString()
-  );
-
-  console.log(
-    "vaultDepositorAccountData shares",
-    vaultDepositorAccountData.vaultShares.toString()
-  );
   const depositorShares = vaultDepositorAccountData.vaultShares;
-
-  // const percentageOfShares = (depositorShares / vaultShares) * 100;
-
-  // console.log("percentageOfShares", percentageOfShares.toString());
-
-  console.log("PERCENTAGE_PRECISION", PERCENTAGE_PRECISION.toString());
-  console.log("PERCENTAGE_PRECISION_EXP", PERCENTAGE_PRECISION_EXP.toString());
 
   const userVaultSharesPct = depositorShares
     .mul(PERCENTAGE_PRECISION)
     .div(vaultShares);
-
-  console.log("userVaultSharesPct", userVaultSharesPct.toString());
 
   const res = BigNum.from(userVaultSharesPct, PERCENTAGE_PRECISION_EXP).mul(
     HUNDRED
@@ -141,5 +106,5 @@ export const initVaultDepositor = async ({
 
   console.log("res", res.toNum());
 
-  return vaultDepositorAccount;
+  return { vaultDepositorAccount, depositorShares: res.toNum() };
 };

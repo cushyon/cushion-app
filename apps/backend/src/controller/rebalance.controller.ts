@@ -80,6 +80,10 @@ export const rebalance = async (req: Request, res: Response) => {
       },
       {
         column: "K",
+        value: result.nav,
+      },
+      {
+        column: "L",
         value: result.totalAmountInUSD,
       },
     ];
@@ -89,7 +93,7 @@ export const rebalance = async (req: Request, res: Response) => {
     if (result.status === "success") {
       await updateTradeExecutionData(
         id,
-        result?.totalAmountInUSD ?? 0,
+        result?.nav ?? 0,
         req.body.initial_capital
       );
     }

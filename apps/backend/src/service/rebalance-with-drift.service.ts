@@ -3,6 +3,8 @@ import { USDC, SOL } from "../lib/tokens";
 import { initDrift } from "@src/utils/init-drift";
 import { swapSolForUsdc } from "@src/utils/swap-sol-for-usdc";
 import { swapUsdcForSol } from "@src/utils/swap-usdc-for-sol";
+import { initVaultDepositor } from "./vault-depositor.service";
+import { PublicKey } from "@solana/web3.js";
 
 export const getAssetData = (asset: string) => {
   if (asset === SOL.address) return SOL;
@@ -17,6 +19,15 @@ export const rebalanceWithDrift = async (
   percentageAsset2: number
 ) => {
   const { driftClient, user } = await initDrift();
+  const { vaultDepositorAccount, depositorShares } = await initVaultDepositor({
+    driftClient,
+    vaultDepositorAddress: new PublicKey(
+      "4aXMMBox8pxMFABgVBg2MCxbFEcgm8cguFA5KRCFA6qf"
+    ),
+  });
+
+  // console.log("vaultDepositorAccount", vaultDepositorAccount);
+  console.log("depositorShares", depositorShares);
 
   // Get the price of the asset1 and asset2
   const asset1Data = getAssetData(asset1);
@@ -87,6 +98,7 @@ export const rebalanceWithDrift = async (
       amountToSwap: 0,
       amountToSwapInSOL: 0,
       totalAmountInUSD,
+      nav: totalAmountInUSD * (depositorShares / 100),
     };
   }
 
@@ -119,13 +131,14 @@ export const rebalanceWithDrift = async (
       amountToSwap: swapResult.amountToSwap,
       amountToSwapInSOL: swapResult.amountToSwapInSOL,
       totalAmountInUSD,
+      nav: totalAmountInUSD * (depositorShares / 100),
     };
   } else {
     const swapResult = await swapUsdcForSol(
       driftClient,
       formattedOraclePriceAsset1,
-      formattedOraclePriceAsset2,
       formattedTokenAmountAsset2,
+      formattedOraclePriceAsset2,
       expectedAmountAsset2
     );
     return {
@@ -137,6 +150,7 @@ export const rebalanceWithDrift = async (
       amountToSwap: swapResult.amountToSwap,
       amountToSwapInSOL: swapResult.amountToSwapInSOL,
       totalAmountInUSD,
+      nav: totalAmountInUSD * (depositorShares / 100),
     };
   }
 };
