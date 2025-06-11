@@ -15,6 +15,8 @@ This organisation currently use 6 repos to run cushion.trade:
 
 - Trigger the python scripts tasks in a third terminal : curl -X POST http://localhost:8000/trigger-task
 
+- If need to use prisma: in packages/database -> npx prisma studio
+
 # How does the backend works
 
 Execute cron, call API node backend. 
