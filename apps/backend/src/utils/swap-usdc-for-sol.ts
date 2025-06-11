@@ -8,41 +8,61 @@ export const swapUsdcForSol = async (
   formattedOraclePriceAsset2: number,
   expectedAmountAsset2: number
 ) => {
-  console.log("==== Entering swapUsdcForSol ====");
-  console.log("formattedOraclePriceAsset1", formattedOraclePriceAsset1);
-  console.log("formattedTokenAmountAsset2", formattedTokenAmountAsset2);
-  console.log("formattedOraclePriceAsset2", formattedOraclePriceAsset2);
-  console.log("expectedAmountAsset2", expectedAmountAsset2);
-  console.log("==== ====================== ====");
+  try {
+    console.log("==== Entering swapUsdcForSol ====");
+    console.log("formattedOraclePriceAsset1", formattedOraclePriceAsset1);
+    console.log("formattedTokenAmountAsset2", formattedTokenAmountAsset2);
+    console.log("formattedOraclePriceAsset2", formattedOraclePriceAsset2);
+    console.log("expectedAmountAsset2", expectedAmountAsset2);
+    console.log("==== ====================== ====");
 
-  const amountExpectedAsset2 = Number(
-    expectedAmountAsset2 / Number(formattedOraclePriceAsset2)
-  );
+    const amountExpectedAsset2 = Number(
+      expectedAmountAsset2 / Number(formattedOraclePriceAsset2)
+    );
 
-  console.log("amountExpectedAsset2", amountExpectedAsset2);
+    console.log("amountExpectedAsset2", amountExpectedAsset2);
 
-  console.log("current amount asset2", formattedTokenAmountAsset2);
-  console.log("amount expected asset2", amountExpectedAsset2);
+    console.log("current amount asset2", formattedTokenAmountAsset2);
+    console.log("amount expected asset2", amountExpectedAsset2);
 
-  const amountToSwap =
-    Number(formattedTokenAmountAsset2) - amountExpectedAsset2;
+    const amountToSwap =
+      Number(formattedTokenAmountAsset2) - amountExpectedAsset2;
 
-  console.log("amount to swap", amountToSwap);
+    console.log("amount to swap", amountToSwap);
 
-  const amountToSwapInSOL =
-    amountToSwap < 0
-      ? formattedTokenAmountAsset2
-      : Number(amountToSwap) / Number(formattedOraclePriceAsset1);
+    const amountToSwapInSOL =
+      amountToSwap < 0
+        ? formattedTokenAmountAsset2
+        : Number(amountToSwap) / Number(formattedOraclePriceAsset1);
 
-  console.log("amount to swap in sol", amountToSwapInSOL);
-  const txSig = await buySolWithUsdc(driftClient, {
-    amountSol: amountToSwapInSOL,
-  });
-  console.log("Transaction signature:", txSig);
-  return {
-    status: "success",
-    txSig,
-    amountToSwap,
-    amountToSwapInSOL,
-  };
+    console.log("amount to swap in sol", amountToSwapInSOL);
+    try {
+      const txSig = await buySolWithUsdc(driftClient, {
+        amountSol: amountToSwapInSOL,
+      });
+      console.log("Transaction signature:", txSig);
+      return {
+        status: "success",
+        txSig,
+        amountToSwap,
+        amountToSwapInSOL,
+      };
+    } catch (error) {
+      console.error("Error swapping usdc for sol", error);
+      return {
+        status: "error",
+        txSig: null,
+        amountToSwap: amountToSwap,
+        amountToSwapInSOL: amountToSwapInSOL,
+      };
+    }
+  } catch (error) {
+    console.error("Error swapping usdc for sol", error);
+    return {
+      status: "error",
+      txSig: null,
+      amountToSwap: 0,
+      amountToSwapInSOL: 0,
+    };
+  }
 };
