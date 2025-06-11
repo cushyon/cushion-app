@@ -9,9 +9,8 @@ import {
 } from "../service/google-sheets.service";
 import { normalisePercents } from "../utils/normalize-percents";
 
-
 export const rebalance = async (req: Request, res: Response) => {
-  console.log("Entering rebalance");
+  console.log("----- Entering rebalance -----");
   // Write the current date in the first column of the Google Sheet
   const currentDate = new Date().toISOString();
   const log: LogEntry = {
@@ -23,7 +22,12 @@ export const rebalance = async (req: Request, res: Response) => {
   try {
     // Get the data from the request body
     let { id, percentageAsset1, percentageAsset2 } = req.body;
-    console.log("percentageAsset1", percentageAsset1, "percentageAsset2", percentageAsset2);
+    console.log(
+      "percentageAsset1",
+      percentageAsset1,
+      "percentageAsset2",
+      percentageAsset2
+    );
     const log: LogEntry = {
       column: "B",
       value: percentageAsset1,
@@ -33,14 +37,19 @@ export const rebalance = async (req: Request, res: Response) => {
     log.value = percentageAsset2;
     await updateLastRow([log]);
     if (percentageAsset1 + percentageAsset2 !== 100) {
-      console.log("Percentage asset1 and asset2 must be 100, current value:", percentageAsset1 + percentageAsset2);
+      console.log(
+        "Percentage asset1 and asset2 must be 100, current value:",
+        percentageAsset1 + percentageAsset2
+      );
       //send a tg notif instead and round the values throw new Error("Percentage asset1 and asset2 must be 100");
       const { p1, p2 } = normalisePercents(percentageAsset1, percentageAsset2);
       percentageAsset1 = p1;
       percentageAsset2 = p2;
       console.log("Normalised percentages", percentageAsset1, percentageAsset2);
     }
-    return;
+    // return;
+
+    console.log("----- STARTING REBALANCE -----");
 
     const result = await rebalanceWithDrift(
       SOL.address,
@@ -48,6 +57,8 @@ export const rebalance = async (req: Request, res: Response) => {
       percentageAsset1,
       percentageAsset2
     );
+
+    console.log("----- REBALANCE COMPLETED -----");
 
     const logResult: LogEntry[] = [
       {
@@ -89,13 +100,15 @@ export const rebalance = async (req: Request, res: Response) => {
     ];
     await updateLastRow(logResult);
 
-    console.log("result", result);
+    console.log("Rebalance result", result);
     if (result.status === "success") {
+      console.log("----- Updating trade execution data -----");
       await updateTradeExecutionData(
         id,
         result?.nav ?? 0,
         req.body.initial_capital
       );
+      console.log("----- Trade execution data updated -----");
     }
     res.json({ message: "Rebalance done", result });
   } catch (error) {
