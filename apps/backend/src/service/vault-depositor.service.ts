@@ -50,10 +50,7 @@ export const initVaultDepositor = async ({
   vaultDepositorAddress: PublicKey;
 }) => {
   console.log("Entering initVaultDepositor");
-  const depositorWallet = new PublicKey(
-    "4aXMMBox8pxMFABgVBg2MCxbFEcgm8cguFA5KRCFA6qf"
-  );
-  const newWallet = createThrowawayIWallet(depositorWallet);
+  const newWallet = createThrowawayIWallet(vaultDepositorAddress);
 
   const driftVaultsProgram = getDriftVaultProgram(
     driftClient.connection,
