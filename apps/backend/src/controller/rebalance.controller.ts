@@ -9,6 +9,7 @@ import {
 } from "../service/google-sheets.service";
 import { normalisePercentage } from "@src/utils/percentage-checks";
 import { retryWithDelay } from "@src/utils/retry-with-delay";
+import { placeLimitOrder } from "@src/service/limit-order.service";
 
 type RebalanceResult = {
   status: "success" | "error";
@@ -49,6 +50,7 @@ export const rebalance = async (req: Request, res: Response) => {
     log.column = "C";
     log.value = percentageAsset2;
     await updateLastRow([log]);
+
     const { percentage1, percentage2 } = normalisePercentage(
       percentageAsset1,
       percentageAsset2
@@ -89,6 +91,12 @@ export const rebalance = async (req: Request, res: Response) => {
     );
 
     console.log("----- REBALANCE COMPLETED -----");
+
+    console.log("----- STARTING LIMIT ORDER -----");
+
+    await placeLimitOrder(SOL.address, 144);
+
+    console.log("----- LIMIT ORDER COMPLETED -----");
 
     if (result.status === "error" || !result.data) {
       throw new Error(result.error || "Rebalance failed");
