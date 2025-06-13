@@ -8,6 +8,7 @@ import {
   LogEntry,
 } from "../service/google-sheets.service";
 import { normalisePercents } from "../utils/normalize-percents";
+import { normalisePercentage } from "@src/utils/percentage-checks";
 
 export const rebalance = async (req: Request, res: Response) => {
   console.log("----- Entering rebalance -----");
@@ -36,26 +37,29 @@ export const rebalance = async (req: Request, res: Response) => {
     log.column = "C";
     log.value = percentageAsset2;
     await updateLastRow([log]);
-    if (percentageAsset1 + percentageAsset2 !== 100) {
-      console.log(
-        "Percentage asset1 and asset2 must be 100, current value:",
-        percentageAsset1 + percentageAsset2
-      );
-      //send a tg notif instead and round the values throw new Error("Percentage asset1 and asset2 must be 100");
-      const { p1, p2 } = normalisePercents(percentageAsset1, percentageAsset2);
-      percentageAsset1 = p1;
-      percentageAsset2 = p2;
-      console.log("Normalised percentages", percentageAsset1, percentageAsset2);
-    }
-    // return;
+    // if (percentageAsset1 + percentageAsset2 !== 100) {
+    //   console.log(
+    //     "Percentage asset1 and asset2 must be 100, current value:",
+    //     percentageAsset1 + percentageAsset2
+    //   );
+    //   //send a tg notif instead and round the values throw new Error("Percentage asset1 and asset2 must be 100");
+    //   const { p1, p2 } = normalisePercents(percentageAsset1, percentageAsset2);
+    //   percentageAsset1 = p1;
+    //   percentageAsset2 = p2;
+    //   console.log("Normalised percentages", percentageAsset1, percentageAsset2);
+    // }
+    const { percentage1, percentage2 } = normalisePercentage(
+      percentageAsset1,
+      percentageAsset2
+    );
 
     console.log("----- STARTING REBALANCE -----");
 
     const result = await rebalanceWithDrift(
       SOL.address,
       USDC.address,
-      percentageAsset1,
-      percentageAsset2
+      percentage1,
+      percentage2
     );
 
     console.log("----- REBALANCE COMPLETED -----");
