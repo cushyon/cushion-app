@@ -66,7 +66,7 @@ export const initVaultDepositor = async ({
   const vaultDepositorPubkey = VaultDepositorAccount.getAddressSync(
     VAULT_PROGRAM_ID,
     new PublicKey("FTKm3WgS8K5AkDKL9UZnmD12JdhFnvxvNN1mF6adGXH9"),
-    new PublicKey("4aXMMBox8pxMFABgVBg2MCxbFEcgm8cguFA5KRCFA6qf")
+    vaultDepositorAddress
   );
 
   const vaultAccount = new VaultAccount(
