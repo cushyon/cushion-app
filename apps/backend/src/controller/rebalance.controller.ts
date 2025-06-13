@@ -7,8 +7,20 @@ import {
   updateLastRow,
   LogEntry,
 } from "../service/google-sheets.service";
-import { normalisePercents } from "../utils/normalize-percents";
 import { normalisePercentage } from "@src/utils/percentage-checks";
+import { retryWithDelay } from "@src/utils/retry-with-delay";
+
+type RebalanceResult = {
+  status: "success" | "error";
+  txSig: string | null;
+  currentPercentageAsset1: number;
+  currentPercentageAsset2: number;
+  swapDirection: string | null;
+  amountToSwap: number;
+  amountToSwapInSOL: number;
+  totalAmountInUSD: number;
+  nav: number;
+};
 
 export const rebalance = async (req: Request, res: Response) => {
   console.log("----- Entering rebalance -----");
@@ -37,17 +49,6 @@ export const rebalance = async (req: Request, res: Response) => {
     log.column = "C";
     log.value = percentageAsset2;
     await updateLastRow([log]);
-    // if (percentageAsset1 + percentageAsset2 !== 100) {
-    //   console.log(
-    //     "Percentage asset1 and asset2 must be 100, current value:",
-    //     percentageAsset1 + percentageAsset2
-    //   );
-    //   //send a tg notif instead and round the values throw new Error("Percentage asset1 and asset2 must be 100");
-    //   const { p1, p2 } = normalisePercents(percentageAsset1, percentageAsset2);
-    //   percentageAsset1 = p1;
-    //   percentageAsset2 = p2;
-    //   console.log("Normalised percentages", percentageAsset1, percentageAsset2);
-    // }
     const { percentage1, percentage2 } = normalisePercentage(
       percentageAsset1,
       percentageAsset2
@@ -55,66 +56,96 @@ export const rebalance = async (req: Request, res: Response) => {
 
     console.log("----- STARTING REBALANCE -----");
 
-    const result = await rebalanceWithDrift(
-      SOL.address,
-      USDC.address,
-      percentage1,
-      percentage2
+    const result = await retryWithDelay<RebalanceResult>(
+      async () => {
+        try {
+          const rebalanceResult = await rebalanceWithDrift(
+            SOL.address,
+            USDC.address,
+            percentage1,
+            percentage2
+          );
+
+          // Ensure the status is either "success" or "error"
+          const status =
+            rebalanceResult.status === "success" ? "success" : "error";
+
+          return {
+            status,
+            data: {
+              ...rebalanceResult,
+              status,
+            },
+          };
+        } catch (error) {
+          return {
+            status: "error",
+            error,
+          };
+        }
+      },
+      3,
+      1000
     );
 
     console.log("----- REBALANCE COMPLETED -----");
 
+    if (result.status === "error" || !result.data) {
+      throw new Error(result.error || "Rebalance failed");
+    }
+
+    const rebalanceData = result.data;
     const logResult: LogEntry[] = [
       {
         column: "D",
-        value: result.status,
+        value: rebalanceData.status,
       },
       {
         column: "E",
-        value: result.txSig,
+        value: rebalanceData.txSig,
       },
       {
         column: "F",
-        value: result.currentPercentageAsset1,
+        value: rebalanceData.currentPercentageAsset1,
       },
       {
         column: "G",
-        value: result.currentPercentageAsset2,
+        value: rebalanceData.currentPercentageAsset2,
       },
       {
         column: "H",
-        value: result.swapDirection,
+        value: rebalanceData.swapDirection,
       },
       {
         column: "I",
-        value: result.amountToSwap,
+        value: rebalanceData.amountToSwap,
       },
       {
         column: "J",
-        value: result.amountToSwapInSOL,
+        value: rebalanceData.amountToSwapInSOL,
       },
       {
         column: "K",
-        value: result.nav,
+        value: rebalanceData.nav,
       },
       {
         column: "L",
-        value: result.totalAmountInUSD,
+        value: rebalanceData.totalAmountInUSD,
       },
     ];
     await updateLastRow(logResult);
 
-    console.log("Rebalance result", result);
-    if (result.status === "success") {
+    console.log("Rebalance result", rebalanceData);
+    if (rebalanceData.status === "success") {
       console.log("----- Updating trade execution data -----");
       await updateTradeExecutionData(
         id,
-        result?.nav ?? 0,
+        rebalanceData.nav ?? 0,
         req.body.initial_capital
       );
       console.log("----- Trade execution data updated -----");
     }
-    res.json({ message: "Rebalance done", result });
+    res.json({ message: "Rebalance done", result: rebalanceData });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Rebalance failed" });
