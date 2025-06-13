@@ -149,6 +149,30 @@ export async function sellSolForUsdc(
   return driftClient.placeSpotOrder(params);
 }
 
+export async function executeLimitOrder(
+  driftClient: DriftClient,
+  {
+    amountSol = 0.1,
+    marketIndex = 1,
+    executionPrice = 0,
+  }: {
+    amountSol?: number;
+    marketIndex?: number;
+    executionPrice?: number;
+  } = {}
+) {
+  const params = {
+    orderType: OrderType.TRIGGER_MARKET,
+    baseAssetAmount: driftClient.convertToPerpPrecision(amountSol),
+    direction: PositionDirection.SHORT,
+    marketIndex,
+    price: executionPrice,
+    triggerPrice: executionPrice,
+  } as const;
+
+  return driftClient.placeSpotOrder(params);
+}
+
 const main = async () => {
   const env = "mainnet-beta";
   const sdkConfig = initialize({ env });
