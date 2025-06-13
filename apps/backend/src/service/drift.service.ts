@@ -174,6 +174,21 @@ export async function executeLimitOrder(
   return driftClient.placeSpotOrder(params);
 }
 
+export async function modifyLimitOrder(
+  driftClient: DriftClient,
+  orderId: number,
+  amountSol: number,
+  executionPrice: number
+) {
+  const updateParams = {
+    orderId,
+    newBaseAmount: driftClient.convertToPerpPrecision(amountSol),
+    newTriggerPrice: driftClient.convertToPricePrecision(executionPrice),
+  };
+
+  return driftClient.modifyOrder(updateParams);
+}
+
 const main = async () => {
   const env = "mainnet-beta";
   const sdkConfig = initialize({ env });
