@@ -1,16 +1,9 @@
-import { buySolWithUsdc, sellSolForUsdc } from "./drift.service";
-import { USDC, SOL } from "../lib/tokens";
 import { initDrift } from "@src/utils/init-drift";
 import { swapSolForUsdc } from "@src/utils/swap-sol-for-usdc";
 import { swapUsdcForSol } from "@src/utils/swap-usdc-for-sol";
 import { initVaultDepositor } from "./vault-depositor.service";
 import { PublicKey } from "@solana/web3.js";
-
-export const getAssetData = (asset: string) => {
-  if (asset === SOL.address) return SOL;
-  if (asset === USDC.address) return USDC;
-  throw new Error("Invalid asset");
-};
+import { getAssetData } from "@src/utils/get-asset-data";
 
 export const rebalanceWithDrift = async (
   asset1: string,
@@ -94,7 +87,7 @@ export const rebalanceWithDrift = async (
 
     const tolerance = 1; // 1% tolerance, if variation above 1%, rebalance. Check and add control for min amount possible to swap
     if (Math.abs(currentPercentageAsset1 - percentageAsset1) <= tolerance) {
-      console.log("No need to rebalance - within tolerance range");
+      console.log("NO NEED TO REBALANCE - WITHIN TOLERANCE RANGE");
       return {
         //if no need to rebalance, return success
         status: "success",
