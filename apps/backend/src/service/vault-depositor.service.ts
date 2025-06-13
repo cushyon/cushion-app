@@ -1,18 +1,9 @@
 import {
-  DriftVaults,
   getDriftVaultProgram,
-  IDL,
   VaultAccount,
-  VaultClient,
   VaultDepositorAccount,
 } from "@drift-labs/vaults-sdk";
-import { initDrift } from "@src/utils/init-drift";
 import { VAULT_PROGRAM_ID } from "@drift-labs/vaults-sdk";
-import {
-  AnchorProvider,
-  Program,
-  Wallet as AnchorWallet,
-} from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
 import * as anchor from "@coral-xyz/anchor";
 import {
