@@ -2,8 +2,7 @@ import { PublicKey } from "@solana/web3.js";
 import { getTokenAccountData } from "../utils/get-token-account-data";
 import { createDriftClient, initProvider } from "./drift.service";
 import { initialize } from "@drift-labs/sdk";
-import { getAssetData } from "./rebalance-with-drift.service";
-import { USDC, SOL } from "../lib/tokens";
+import { getAssetData } from "@src/utils/get-asset-data";
 
 const PUBLIC_KEY = "8JJCtexL5QTc4jnLztHNT4dKLSNhswuYwmR4gVvJZwAh";
 
