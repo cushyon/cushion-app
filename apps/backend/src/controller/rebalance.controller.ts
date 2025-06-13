@@ -9,7 +9,11 @@ import {
 } from "../service/google-sheets.service";
 import { normalisePercentage } from "@src/utils/percentage-checks";
 import { retryWithDelay } from "@src/utils/retry-with-delay";
-import { placeLimitOrder } from "@src/service/limit-order.service";
+import {
+  modifyLimitOrder,
+  placeLimitOrder,
+  isLimitOrderSet,
+} from "@src/service/limit-order.service";
 
 type RebalanceResult = {
   status: "success" | "error";
@@ -35,12 +39,14 @@ export const rebalance = async (req: Request, res: Response) => {
 
   try {
     // Get the data from the request body
-    let { id, percentageAsset1, percentageAsset2 } = req.body;
+    let { id, percentageAsset1, percentageAsset2, limitOrderPrice } = req.body;
     console.log(
       "percentageAsset1",
       percentageAsset1,
       "percentageAsset2",
-      percentageAsset2
+      percentageAsset2,
+      "limitOrderPrice",
+      limitOrderPrice
     );
     const log: LogEntry = {
       column: "B",
@@ -94,7 +100,25 @@ export const rebalance = async (req: Request, res: Response) => {
 
     console.log("----- STARTING LIMIT ORDER -----");
 
-    await placeLimitOrder(SOL.address, 144);
+    if (!limitOrderPrice) {
+      limitOrderPrice = 140;
+    }
+
+    const isLimitOrderSetResult = await isLimitOrderSet();
+
+    if (isLimitOrderSetResult.isSet) {
+      console.log("----- MODIFYING LIMIT ORDER -----");
+      await modifyLimitOrder(
+        isLimitOrderSetResult.orderId,
+        SOL.address,
+        Number(limitOrderPrice)
+      );
+      console.log("----- LIMIT ORDER MODIFIED -----");
+    } else {
+      console.log("----- PLACING LIMIT ORDER -----");
+      await placeLimitOrder(SOL.address, Number(limitOrderPrice));
+      console.log("----- LIMIT ORDER PLACED -----");
+    }
 
     console.log("----- LIMIT ORDER COMPLETED -----");
 
