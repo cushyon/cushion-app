@@ -8,6 +8,7 @@ import {
   OrderType,
   initialize,
   BN,
+  OrderTriggerCondition,
 } from "@drift-labs/sdk";
 
 export const getTokenAddress = (
@@ -166,8 +167,8 @@ export async function executeLimitOrder(
     baseAssetAmount: driftClient.convertToPerpPrecision(amountSol),
     direction: PositionDirection.SHORT,
     marketIndex,
-    price: executionPrice,
-    triggerPrice: executionPrice,
+    triggerPrice: driftClient.convertToPricePrecision(executionPrice),
+    triggerCondition: OrderTriggerCondition.BELOW,
   } as const;
 
   return driftClient.placeSpotOrder(params);
