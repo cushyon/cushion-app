@@ -9,6 +9,11 @@ import {
 } from "../service/google-sheets.service";
 import { normalisePercentage } from "@src/utils/percentage-checks";
 import { retryWithDelay } from "@src/utils/retry-with-delay";
+import {
+  modifyLimitOrder,
+  placeLimitOrder,
+  isLimitOrderSet,
+} from "@src/service/limit-order.service";
 
 type RebalanceResult = {
   status: "success" | "error";
@@ -34,12 +39,14 @@ export const rebalance = async (req: Request, res: Response) => {
 
   try {
     // Get the data from the request body
-    let { id, percentageAsset1, percentageAsset2 } = req.body;
+    let { id, percentageAsset1, percentageAsset2, limitOrderPrice } = req.body;
     console.log(
       "percentageAsset1",
       percentageAsset1,
       "percentageAsset2",
-      percentageAsset2
+      percentageAsset2,
+      "limitOrderPrice",
+      limitOrderPrice
     );
     const log: LogEntry = {
       column: "B",
@@ -49,6 +56,7 @@ export const rebalance = async (req: Request, res: Response) => {
     log.column = "C";
     log.value = percentageAsset2;
     await updateLastRow([log]);
+
     const { percentage1, percentage2 } = normalisePercentage(
       percentageAsset1,
       percentageAsset2
@@ -89,6 +97,30 @@ export const rebalance = async (req: Request, res: Response) => {
     );
 
     console.log("----- REBALANCE COMPLETED -----");
+
+    console.log("----- STARTING LIMIT ORDER -----");
+
+    if (!limitOrderPrice) {
+      limitOrderPrice = 140;
+    }
+
+    const isLimitOrderSetResult = await isLimitOrderSet();
+
+    if (isLimitOrderSetResult.isSet) {
+      console.log("----- MODIFYING LIMIT ORDER -----");
+      await modifyLimitOrder(
+        isLimitOrderSetResult.orderId,
+        SOL.address,
+        Number(limitOrderPrice)
+      );
+      console.log("----- LIMIT ORDER MODIFIED -----");
+    } else {
+      console.log("----- PLACING LIMIT ORDER -----");
+      await placeLimitOrder(SOL.address, Number(limitOrderPrice));
+      console.log("----- LIMIT ORDER PLACED -----");
+    }
+
+    console.log("----- LIMIT ORDER COMPLETED -----");
 
     if (result.status === "error" || !result.data) {
       throw new Error(result.error || "Rebalance failed");

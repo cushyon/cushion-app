@@ -8,6 +8,7 @@ import {
   OrderType,
   initialize,
   BN,
+  OrderTriggerCondition,
 } from "@drift-labs/sdk";
 
 export const getTokenAddress = (
@@ -147,6 +148,45 @@ export async function sellSolForUsdc(
   } as const;
 
   return driftClient.placeSpotOrder(params);
+}
+
+export async function executeLimitOrder(
+  driftClient: DriftClient,
+  {
+    amountSol = 0.1,
+    marketIndex = 1,
+    executionPrice = 0,
+  }: {
+    amountSol?: number;
+    marketIndex?: number;
+    executionPrice?: number;
+  } = {}
+) {
+  const params = {
+    orderType: OrderType.TRIGGER_MARKET,
+    baseAssetAmount: driftClient.convertToPerpPrecision(amountSol),
+    direction: PositionDirection.SHORT,
+    marketIndex,
+    triggerPrice: driftClient.convertToPricePrecision(executionPrice),
+    triggerCondition: OrderTriggerCondition.BELOW,
+  } as const;
+
+  return driftClient.placeSpotOrder(params);
+}
+
+export async function modifyLimitOrder(
+  driftClient: DriftClient,
+  orderId: number,
+  amountSol: number,
+  executionPrice: number
+) {
+  const updateParams = {
+    orderId,
+    newBaseAmount: driftClient.convertToPerpPrecision(amountSol),
+    newTriggerPrice: driftClient.convertToPricePrecision(executionPrice),
+  };
+
+  return driftClient.modifyOrder(updateParams);
 }
 
 const main = async () => {
