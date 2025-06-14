@@ -31,7 +31,7 @@ export default function Home() {
           >
             Resources
           </Link>
-          <Link href="https://app.cushion.trade/vaults/FTKm3WgS8K5AkDKL9UZnmD12JdhFnvxvNN1mF6adGXH9">
+          <Link href="https://app.cushion.trade/vaults">
             <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6">
               Launch app
             </Button>
@@ -60,7 +60,7 @@ export default function Home() {
                     </span>
                   </div>
                   <div className="pt-2">
-                    <Link href="https://app.cushion.trade/vaults/FTKm3WgS8K5AkDKL9UZnmD12JdhFnvxvNN1mF6adGXH9">
+                    <Link href="https://app.cushion.trade/vaults">
                       <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-8 w-full sm:w-auto">
                         Earn
                       </Button>
