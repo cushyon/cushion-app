@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
+import PoweredBy from "../components/powered-by";
 
 export default function Home() {
   return (
@@ -75,6 +76,7 @@ export default function Home() {
             {/* This space is intentionally left empty to match the layout in the image */}
           </div>
         </div>
+        <PoweredBy />
       </main>
     </div>
   );
