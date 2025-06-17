@@ -1,9 +1,25 @@
 import type React from "react";
 import "./global.css";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import { ThemeProvider } from "../components/theme-provider";
 import { Footer } from "../components/footer";
-const inter = Inter({ subsets: ["latin"] });
+const pretendard = localFont({
+  src: [
+    {
+      path: "../public/fonts/pretendard/Pretendard-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/pretendard/Pretendard-Bold.woff2",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+  display: "swap",
+  preload: true,
+  variable: "--font-pretendard",
+});
 
 export const metadata = {
   icons: {
@@ -21,8 +37,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+    <html lang="en" suppressHydrationWarning className={pretendard.variable}>
+      <body className={pretendard.className}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
