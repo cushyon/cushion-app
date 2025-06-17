@@ -33,7 +33,7 @@ export default function Home() {
             Resources
           </Link>
           <Link href="https://app.cushion.trade/vaults">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 bg-[linear-gradient(90deg,#091BCD_0%,#123FFC_35%,#0B3FE8_64%,#4571F4_100%)]">
               Launch app
             </Button>
           </Link>
@@ -51,25 +51,11 @@ export default function Home() {
               Cushion brings capital-protected strategies to DeFi, offering
               high-return solutions with advanced risk management
             </p>
-
-            <div className="mt-15">
-              <Card className="w-full max-w-sm bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border-0 p-6 rounded-xl shadow-xl">
-                <div className="space-y-4">
-                  <div className="flex flex-col items-start gap-2">
-                    <span className="text-xl text-gray-200">
-                      Internet capital-protected markets
-                    </span>
-                  </div>
-                  <div className="pt-2">
-                    <Link href="https://app.cushion.trade/vaults">
-                      <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-8 w-full sm:w-auto">
-                        Earn
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              </Card>
-            </div>
+            <Link href="https://app.cushion.trade/vaults">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-8 py-3 text-sm w-full sm:w-auto bg-[linear-gradient(90deg,#091BCD_0%,#123FFC_35%,#0B3FE8_64%,#4571F4_100%)]">
+                Earn
+              </Button>
+            </Link>
           </div>
 
           <div className="hidden md:block">
