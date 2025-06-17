@@ -22,7 +22,7 @@ export function Footer() {
                   <SiX className="w-6 h-6" />
                 </Link>
                 <Link
-                  href="https://t.me/+y6vY0cHU-OY2YmE0"
+                  href="https://t.me/+M9BB2XVbr0xhZDVk"
                   className="inline-block"
                 >
                   <SiTelegram className="w-6 h-6" />
