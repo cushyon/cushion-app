@@ -6,7 +6,7 @@ export default function PoweredBy() {
       <div className="text-center">
         <h3 className="text-gray-500 text-3xl mb-8">Powered by</h3>
         <div className="flex items-center justify-center gap-12 md:gap-16">
-          <Image src="/Jup_x2.png" alt="Jupiter" width={176} height={59} />
+          <Image src="/jup_x2.png" alt="Jupiter" width={176} height={59} />
           <Image src="/drift_png.png" alt="Drift" width={176} height={59} />
           <Image src="/pyth.svg" alt="Pyth" width={156} height={54} />
         </div>
