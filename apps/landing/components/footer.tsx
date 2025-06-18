@@ -58,7 +58,7 @@ export function Footer() {
             <ul className="space-y-4">
               <li>
                 <Link
-                  href="https://t.me/+y6vY0cHU-OY2YmE0"
+                  href="https://t.me/+M9BB2XVbr0xhZDVk"
                   className="hover:underline"
                 >
                   Contact us
