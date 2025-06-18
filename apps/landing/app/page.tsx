@@ -9,8 +9,13 @@ export default function Home() {
     <div className="min-h-screen bg-black relative overflow-hidden">
       {/* Gradient background effect */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-1/2 right-0 w-[600px] h-[600px] rounded-full bg-purple-700/20 blur-[120px] transform -translate-y-1/2" />
-        <div className="absolute top-1/3 right-1/4 w-[400px] h-[400px] rounded-full bg-blue-600/20 blur-[100px]" />
+        <Image
+          src="/img.png"
+          alt="Background"
+          fill
+          className="object-cover"
+          priority
+        />
       </div>
 
       {/* Header */}
