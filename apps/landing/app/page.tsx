@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "../components/ui/button";
-import { Card } from "../components/ui/card";
 import PoweredBy from "../components/powered-by";
 
 export default function Home() {
@@ -13,7 +12,7 @@ export default function Home() {
           src="/img.png"
           alt="Background"
           fill
-          className="object-cover"
+          className="object-cover blur-2xl"
           priority
         />
       </div>
