@@ -29,14 +29,17 @@ export default function Home() {
       <main>
         <section
           className="relative isolate flex items-center min-h-[calc(100vh-96px)]
-                          overflow-visible px-6 md:px-12"
+             overflow-visible px-6 md:px-12
+             after:absolute after:inset-x-0 after:bottom-0 after:h-48
+             after:bg-gradient-to-b after:from-transparent after:to-black
+             after:pointer-events-none"
         >
           <Image
             src="/img.png"
             alt="Decorative gradient"
             fill
             priority
-            className="absolute inset-0 -z-10 object-cover blur-2xl pointer-events-none"
+            className="absolute inset-0 -z-10 object-cover pointer-events-none"
           />
           <div className="grid md:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
             <div className="space-y-6">
@@ -57,22 +60,35 @@ export default function Home() {
           </div>
         </section>
         {/* </div> */}
-        {/* <section className="flex h-[140px] justify-center items-center gap-2.5 flex-shrink-0 w-full mt-32">
-          <div className="flex-1 text-center">
+        <section className="flex h-[140px] items-center justify-center gap-2.5">
+          <h2
+            className="flex-1 text-center font-pretendard font-semibold
+               text-[120px] leading-loose opacity-80
+               bg-gradient-to-b from-[rgba(124,187,255,0.90)] to-[rgba(23,81,239,0.02)]]
+               bg-clip-text text-transparent"
+          >
+            Security and performance
+          </h2>
+        </section>
+        <section className="w-full flex justify-center mt-34">
+          <div className="flex flex-col items-center gap-[35px] w-full max-w-[1472px]">
             <h2
-              className="text-7xl font-semibold leading-[60px] opacity-80"
-              style={{
-                background:
-                  "linear-gradient(211deg, rgba(124, 187, 255, 0.90) 67.58%, rgba(23, 81, 239, 0.02) 175.62%)",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
+              className="text-center font-pretendard font-bold
+               text-[48px] leading-[76px] text-[#F1F5F9]"
             >
-              Security and performance
+              Maximize&nbsp;Performance,
+              <br />
+              Safeguard&nbsp;Your&nbsp;Assets
             </h2>
+
+            <p className="text-center font-pretendard text-sm md:text-base leading-7 text-slate-400">
+              Benefit from strategies based on quantitative models,
+              <br />
+              for performance and capital&nbsp;protection,
+              invest&nbsp;smarter&nbsp;and&nbsp;simpler.
+            </p>
           </div>
-        </section> */}
+        </section>
         <section className="px-6 md:px-12 py-24 max-w-7xl mx-auto">
           <PoweredBy />
         </section>
