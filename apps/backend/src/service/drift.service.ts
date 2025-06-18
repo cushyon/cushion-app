@@ -189,6 +189,10 @@ export async function modifyLimitOrder(
   return driftClient.modifyOrder(updateParams);
 }
 
+export async function cancelOrder(driftClient: DriftClient, orderId: number) {
+  return driftClient.cancelOrder(orderId);
+}
+
 const main = async () => {
   const env = "mainnet-beta";
   const sdkConfig = initialize({ env });

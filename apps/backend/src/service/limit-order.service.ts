@@ -94,6 +94,17 @@ export async function modifyLimitOrder(
   }
 }
 
+export async function cancelLimitOrder(orderId: number) {
+  try {
+    const { driftClient, user } = await initDrift();
+
+    return driftClient.cancelOrder(orderId);
+  } catch (error) {
+    console.log("error", error);
+    return null;
+  }
+}
+
 export async function isLimitOrderSet() {
   const { user } = await initDrift();
 
