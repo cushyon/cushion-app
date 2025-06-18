@@ -26,12 +26,6 @@ export default function Home() {
         </div>
 
         <div className="flex items-center gap-6">
-          <Link
-            href="#resources"
-            className="text-gray-400 hover:text-white transition-colors"
-          >
-            Resources
-          </Link>
           <Link href="https://app.cushion.trade/vaults">
             <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 bg-[linear-gradient(90deg,#091BCD_0%,#123FFC_35%,#0B3FE8_64%,#4571F4_100%)]">
               Launch app
