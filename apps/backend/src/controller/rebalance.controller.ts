@@ -13,6 +13,7 @@ import {
   modifyLimitOrder,
   placeLimitOrder,
   isLimitOrderSet,
+  cancelLimitOrder,
 } from "@src/service/limit-order.service";
 
 type RebalanceResult = {
@@ -62,8 +63,6 @@ export const rebalance = async (req: Request, res: Response) => {
       percentageAsset2
     );
 
-    console.log("----- STARTING REBALANCE -----");
-
     const result = await retryWithDelay<RebalanceResult>(
       async () => {
         try {
@@ -101,7 +100,7 @@ export const rebalance = async (req: Request, res: Response) => {
     console.log("----- STARTING LIMIT ORDER -----");
 
     if (!limitOrderPrice) {
-      limitOrderPrice = 140;
+      limitOrderPrice = 90;
     }
 
     const isLimitOrderSetResult = await isLimitOrderSet();

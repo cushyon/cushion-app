@@ -4,6 +4,7 @@ import { swapUsdcForSol } from "@src/utils/swap-usdc-for-sol";
 import { initVaultDepositor } from "./vault-depositor.service";
 import { PublicKey } from "@solana/web3.js";
 import { getAssetData } from "@src/utils/get-asset-data";
+import { cancelLimitOrder, isLimitOrderSet } from "./limit-order.service";
 
 export const rebalanceWithDrift = async (
   asset1: string,
@@ -100,6 +101,22 @@ export const rebalanceWithDrift = async (
         totalAmountInUSD,
         nav: totalAmountInUSD * (depositorShares / 100),
       };
+    }
+
+    const isLimitOrderSetResult = await isLimitOrderSet();
+
+    if (isLimitOrderSetResult.isSet) {
+      console.log("----- CANCELING LIMIT ORDER -----");
+      await cancelLimitOrder(isLimitOrderSetResult.orderId);
+
+      console.log("----- LIMIT ORDER CANCELLED -----");
+
+      // Wait 120 seconds after canceling limit order
+      console.log(
+        "----- WAITING 120 SECONDS AFTER CANCELING LIMIT ORDER -----"
+      );
+      await new Promise((resolve) => setTimeout(resolve, 120000));
+      console.log("----- 120 SECONDS WAIT COMPLETED -----");
     }
 
     const swapDirection =
