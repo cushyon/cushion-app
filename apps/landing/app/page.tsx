@@ -60,28 +60,39 @@ export default function Home() {
           </div>
         </section>
         {/* </div> */}
-        <section className="flex h-[140px] items-center justify-center gap-2.5">
+        <section
+          className="w-full flex items-center justify-center
+                     px-4 py-8 sm:py-10 md:py-12 lg:py-16"
+        >
           <h2
             className="flex-1 text-center font-pretendard font-semibold
-               text-[120px] leading-loose opacity-80
-               bg-gradient-to-b from-[rgba(124,187,255,0.90)] to-[rgba(23,81,239,0.02)]]
+               text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-[120px]
+               leading-[1.1] opacity-90
+               bg-gradient-to-b
+               from-[#7CBBFF] to-[#1751EF33]
                bg-clip-text text-transparent"
           >
             Security and performance
           </h2>
         </section>
-        <section className="w-full flex justify-center mt-34">
-          <div className="flex flex-col items-center gap-[35px] w-full max-w-[1472px]">
+        <section className="w-full flex justify-center px-4 mt-16 md:mt-24 lg:mt-32">
+          <div className="flex flex-col items-center w-full max-w-xl md:max-w-3xl lg:max-w-[1472px] gap-[35px]">
             <h2
-              className="text-center font-pretendard font-bold
-               text-[48px] leading-[76px] text-[#F1F5F9]"
+              className="text-center font-pretendard font-bold text-[#F1F5F9]
+                 text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[48px]
+                 leading-tight sm:leading-[48px] md:leading-[60px] lg:leading-[68px] xl:leading-[76px]"
             >
               Maximize&nbsp;Performance,
               <br />
               Safeguard&nbsp;Your&nbsp;Assets
             </h2>
 
-            <p className="text-center font-pretendard text-sm md:text-base leading-7 text-slate-400">
+            <p
+              className="text-center font-pretendard text-slate-400
+                 text-sm sm:text-base md:text-lg lg:text-xl
+                 leading-relaxed sm:leading-7 md:leading-8
+                 max-w-lg md:max-w-xl lg:max-w-2xl"
+            >
               Benefit from strategies based on quantitative models,
               <br />
               for performance and capital&nbsp;protection,
