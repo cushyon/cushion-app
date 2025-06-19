@@ -8,9 +8,27 @@ export default function PoweredBy() {
           Powered by
         </h3>
         <div className="flex items-center justify-center gap-12 md:gap-16">
-          <Image src="/jup_x2.png" alt="Jupiter" width={176} height={59} />
-          <Image src="/drift_png.png" alt="Drift" width={176} height={59} />
-          <Image src="/pyth.svg" alt="Pyth" width={156} height={54} />
+          <Image
+            src="/jup_x2.png"
+            alt="Jupiter"
+            width={176}
+            height={59}
+            className="h-8 sm:h-10 md:h-12 lg:h-14 w-auto"
+          />
+          <Image
+            src="/drift_png.png"
+            alt="Drift"
+            width={176}
+            height={59}
+            className="h-8 sm:h-10 md:h-12 lg:h-14 w-auto"
+          />
+          <Image
+            src="/pyth.svg"
+            alt="Pyth"
+            width={156}
+            height={54}
+            className="h-8 sm:h-10 md:h-12 lg:h-14 w-auto"
+          />
         </div>
       </div>
     </div>
