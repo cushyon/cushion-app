@@ -46,11 +46,11 @@ export function Footer() {
                   Github
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link href="#" className="hover:underline">
                   Media Kit
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
           <div className="md:col-span-3">
@@ -64,7 +64,7 @@ export function Footer() {
                   Contact us
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link href="#" className="hover:underline">
                   Term of use
                 </Link>
@@ -73,7 +73,7 @@ export function Footer() {
                 <Link href="#" className="hover:underline">
                   Privacy policy
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>
