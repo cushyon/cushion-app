@@ -34,7 +34,10 @@ export function Footer() {
             <h3 className="text-xl font-medium mb-6">Resources</h3>
             <ul className="space-y-4">
               <li>
-                <Link href="#" className="hover:underline">
+                <Link
+                  href="https://cushion-1.gitbook.io/cushion"
+                  className="hover:underline"
+                >
                   Documentation
                 </Link>
               </li>
