@@ -49,6 +49,7 @@ export const startAPYCron = (config: APYCronConfig): void => {
         where: { id: currentConfig!.tradeExecutionId },
         data: {
           apy: result.apy,
+          tvl: result.totalVaultValue
         },
       });
 
