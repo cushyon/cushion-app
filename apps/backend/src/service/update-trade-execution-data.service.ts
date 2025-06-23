@@ -1,3 +1,4 @@
+// @ts-ignore
 import { prisma } from "@repo/database";
 
 export const updateTradeExecutionData = async (

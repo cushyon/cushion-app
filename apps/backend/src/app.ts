@@ -1,4 +1,5 @@
 import express, { Express, RequestHandler } from "express";
+import { corsMiddleware } from "./middleware/cors.middleware";
 import { rebalance } from "./controller/rebalance.controller";
 import { tradeExecutionData } from "./controller/trade-execution-data.controller";
 import { assetPairPrice } from "./controller/asset-pair-price.controller";
@@ -18,6 +19,9 @@ import {
 } from "./controller/apy-cron.controller";
 
 const app: Express = express();
+
+// CORS middleware
+app.use(corsMiddleware);
 
 // Middleware to parse JSON
 app.use(express.json());
