@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Tradeexecution" ADD COLUMN     "tvl" DOUBLE PRECISION NOT NULL DEFAULT 0;
