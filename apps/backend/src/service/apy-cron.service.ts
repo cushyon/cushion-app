@@ -12,6 +12,7 @@ interface APYCronConfig {
 // Global variables to manage the cron job
 let cronJob: cron.ScheduledTask | null = null;
 let currentConfig: APYCronConfig | null = null;
+let isExecuting = false;
 
 /**
  * Starts the APY cron job
@@ -21,12 +22,12 @@ export const startAPYCron = (config: APYCronConfig): void => {
   stopAPYCron();
 
   currentConfig = {
-    cronSchedule: "*/10 * * * *", // Every 10 minutes
+    cronSchedule: "* * * * * *", // Every 1 second
     ...config,
   };
 
   // Ensure cronSchedule is always a valid string
-  const schedule = currentConfig.cronSchedule || "*/10 * * * *";
+  const schedule = currentConfig.cronSchedule || "* * * * * *";
 
   console.log(
     `Starting APY cron job for trade execution: ${currentConfig.tradeExecutionId}`
@@ -35,6 +36,14 @@ export const startAPYCron = (config: APYCronConfig): void => {
   console.log(`Vault depositor: ${currentConfig.vaultDepositorAddress}`);
 
   cronJob = cron.schedule(schedule, async () => {
+    if (isExecuting) {
+      console.log(
+        `[${new Date().toISOString()}] Skipping execution: previous task still running.`
+      );
+      return;
+    }
+
+    isExecuting = true;
     try {
       console.log(`[${new Date().toISOString()}] Executing APY calculation...`);
 
@@ -63,6 +72,8 @@ export const startAPYCron = (config: APYCronConfig): void => {
         `[${new Date().toISOString()}] Error in APY cron job:`,
         error
       );
+    } finally {
+      isExecuting = false;
     }
   });
 
@@ -92,6 +103,14 @@ export const executeAPYCalculation = async (): Promise<void> => {
     );
   }
 
+  if (isExecuting) {
+    console.log(
+      `[${new Date().toISOString()}] Cannot manually execute: task is already running.`
+    );
+    return;
+  }
+
+  isExecuting = true;
   try {
     console.log(
       `[${new Date().toISOString()}] Manual APY calculation execution...`
@@ -124,6 +143,8 @@ export const executeAPYCalculation = async (): Promise<void> => {
       error
     );
     throw error;
+  } finally {
+    isExecuting = false;
   }
 };
 
