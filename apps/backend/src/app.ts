@@ -17,6 +17,7 @@ import {
   getAPYCronStatusController,
   executeAPYCalculationController,
 } from "./controller/apy-cron.controller";
+import { getTVLController } from "./controller/tvl.controller";
 
 const app: Express = express();
 
@@ -64,7 +65,6 @@ app.post(
   "/api/apy-cron/execute",
   executeAPYCalculationController as RequestHandler
 );
-
-// rebalanceWithDrift(SOL.address, USDC.address, 70, 30);
+app.get("/api/get-tvl/:tradeExecutionId", getTVLController as RequestHandler);
 
 export default app;

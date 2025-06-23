@@ -53,7 +53,7 @@ export const startAPYCron = (config: APYCronConfig): void => {
         currentConfig!.tradeExecutionId
       );
 
-      // Store APY in database
+      // Store APY + TVL in database
       await prisma.tradeexecution.update({
         where: { id: currentConfig!.tradeExecutionId },
         data: {
