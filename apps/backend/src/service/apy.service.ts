@@ -36,10 +36,11 @@ export const calculateAPY = async (
     const safeAsset = tradeExecution.safe_asset;
 
     const { driftClient, user } = await initDrift();
-    const { depositorShares } = await initVaultDepositor({
-      driftClient,
-      vaultDepositorAddress: new PublicKey(vaultDepositorAddress),
-    });
+    const { depositorShares, vaultAccount, vaultDepositorAccount } =
+      await initVaultDepositor({
+        driftClient,
+        vaultDepositorAddress: new PublicKey(vaultDepositorAddress),
+      });
 
     const asset1Data = getAssetData(riskyAsset);
     const asset2Data = getAssetData(safeAsset);
@@ -80,6 +81,10 @@ export const calculateAPY = async (
       const totalReturn = nav / initialCapital - 1;
       apy = totalReturn * (365 / timeElapsed) * 100;
     }
+
+    await driftClient.unsubscribe();
+    await vaultAccount.unsubscribe();
+    await vaultDepositorAccount.unsubscribe();
 
     return {
       apy,

@@ -94,5 +94,5 @@ export const initVaultDepositor = async ({
 
   console.log("res", res.toNum());
 
-  return { vaultDepositorAccount, depositorShares: res.toNum() };
+  return { vaultAccount, vaultDepositorAccount, depositorShares: res.toNum() };
 };
