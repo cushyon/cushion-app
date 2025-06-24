@@ -22,12 +22,11 @@ export const startAPYCron = (config: APYCronConfig): void => {
   stopAPYCron();
 
   currentConfig = {
-    cronSchedule: "*/10 * * * * *", // Every 5 seconds
+    cronSchedule: "*/15 * * * * *",
     ...config,
   };
 
-  // Ensure cronSchedule is always a valid string
-  const schedule = currentConfig.cronSchedule || "*/10 * * * * *";
+  const schedule = currentConfig.cronSchedule || "*/15 * * * * *";
 
   console.log(
     `Starting APY cron job for trade execution: ${currentConfig.tradeExecutionId}`
