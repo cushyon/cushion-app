@@ -22,12 +22,12 @@ export const startAPYCron = (config: APYCronConfig): void => {
   stopAPYCron();
 
   currentConfig = {
-    cronSchedule: "* * * * * *", // Every 1 second
+    cronSchedule: "*/10 * * * * *", // Every 5 seconds
     ...config,
   };
 
   // Ensure cronSchedule is always a valid string
-  const schedule = currentConfig.cronSchedule || "* * * * * *";
+  const schedule = currentConfig.cronSchedule || "*/10 * * * * *";
 
   console.log(
     `Starting APY cron job for trade execution: ${currentConfig.tradeExecutionId}`
@@ -58,7 +58,7 @@ export const startAPYCron = (config: APYCronConfig): void => {
         where: { id: currentConfig!.tradeExecutionId },
         data: {
           apy: result.apy,
-          tvl: result.totalVaultValue
+          tvl: result.totalVaultValue,
         },
       });
 
@@ -68,6 +68,7 @@ export const startAPYCron = (config: APYCronConfig): void => {
         totalVaultValue: result.totalVaultValue,
         depositorShares: result.depositorShares,
       });
+      console.log("Memory usage after APY calculation:", process.memoryUsage());
     } catch (error) {
       console.error(
         `[${new Date().toISOString()}] Error in APY cron job:`,
@@ -137,6 +138,10 @@ export const executeAPYCalculation = async (): Promise<void> => {
         totalVaultValue: result.totalVaultValue,
         depositorShares: result.depositorShares,
       }
+    );
+    console.log(
+      "Memory usage after manual APY calculation:",
+      process.memoryUsage()
     );
   } catch (error) {
     console.error(
