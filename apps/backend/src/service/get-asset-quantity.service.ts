@@ -44,6 +44,8 @@ export const getAssetQuantityDrift = async (asset1: string, asset2: string) => {
   const tokenAmountAsset1 = user.getTokenAmount(asset1Data.marketIndex);
   const tokenAmountAsset2 = user.getTokenAmount(asset2Data.marketIndex);
 
+  await driftClient.unsubscribe();
+
   return {
     asset1: {
       amount: tokenAmountAsset1.toString(),
