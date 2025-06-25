@@ -5,6 +5,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "https://cushion.trade",
   "https://app.cushion.trade",
+  "https://ui-vault-git-unified-wallet-kit-3shop.vercel.app/",
 ];
 
 export const corsMiddleware = cors({
