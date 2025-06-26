@@ -74,25 +74,6 @@ export const getVaultStats = async (vaultAddress: string) => {
 
   await driftClient.unsubscribe();
 
-  console.log("--------------------------------");
-  console.log(vaultStats);
-  console.log("tvlQuote", vaultStats.tvlQuote.toNum());
-  console.log("tvlBase", vaultStats.tvlBase.toNum());
-  console.log("totalBasePnl", vaultStats.totalBasePnl.toNum());
-  console.log("totalQuotePnl", vaultStats.totalQuotePnl.toNum());
-  console.log("capacityPct", vaultStats.capacityPct);
-  console.log("volume30Days", vaultStats.volume30Days.toNum());
-  console.log("totalShares", vaultStats.totalShares.toNum());
-  console.log(
-    "vaultRedeemPeriodSecs",
-    vaultStats.vaultRedeemPeriodSecs.toNumber()
-  );
-  console.log(
-    "notionalGrowthQuotePnl",
-    vaultStats.notionalGrowthQuotePnl.toNum()
-  );
-  console.log("--------------------------------");
-
   return vaultStats;
 };
 

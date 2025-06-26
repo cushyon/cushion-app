@@ -63,6 +63,8 @@ export const startAPYCron = (config: APYCronConfig): void => {
         data: {
           apy: result.apy,
           tvl: result.totalVaultValue,
+          thirty_days_vol: vaultStats.volume30Days.toNum(),
+          total_earnings: vaultStats.notionalGrowthQuotePnl.toNum(),
         },
       });
 
