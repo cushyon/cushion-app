@@ -10,6 +10,13 @@ import {
   BN,
   OrderTriggerCondition,
 } from "@drift-labs/sdk";
+import {
+  VAULT_PROGRAM_ID,
+  VaultClient,
+  IDL,
+  getDriftVaultProgram,
+} from "@drift-labs/vaults-sdk";
+import { createThrowawayIWallet } from "@src/utils/create-iwallet";
 
 export const getTokenAddress = (
   mintAddress: string,
@@ -70,6 +77,23 @@ export async function createDriftClient(
 
   await driftClient.subscribe();
   return driftClient;
+}
+
+export async function createVaultClient(
+  provider: AnchorProvider,
+  driftClient: DriftClient
+) {
+  const iwallet = createThrowawayIWallet(provider.wallet.publicKey);
+
+  const driftVaultsProgram = getDriftVaultProgram(
+    driftClient.connection,
+    iwallet
+  );
+
+  return new VaultClient({
+    driftClient,
+    program: driftVaultsProgram,
+  });
 }
 
 const BASIS_POINTS = 10_000;
