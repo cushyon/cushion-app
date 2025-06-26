@@ -2,6 +2,7 @@ import cron from "node-cron";
 import { calculateAPY } from "./apy.service";
 // @ts-ignore
 import { prisma } from "@repo/database";
+import { getVaultStats } from "./vault-stats.service";
 
 interface APYCronConfig {
   vaultDepositorAddress: string;
@@ -50,6 +51,10 @@ export const startAPYCron = (config: APYCronConfig): void => {
       const result = await calculateAPY(
         currentConfig!.vaultDepositorAddress,
         currentConfig!.tradeExecutionId
+      );
+
+      const vaultStats = await getVaultStats(
+        "FTKm3WgS8K5AkDKL9UZnmD12JdhFnvxvNN1mF6adGXH9"
       );
 
       // Store APY + TVL in database
