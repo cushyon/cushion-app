@@ -28,4 +28,6 @@ model Tradeexecution {
   initial_capital Float
   apy             Float  @default(0)
   tvl             Float  @default(0)
+  thirty_days_vol Float  @default(0)
+  total_earnings  Float  @default(0)
 }
