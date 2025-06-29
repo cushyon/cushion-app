@@ -18,7 +18,7 @@ export default function Home() {
         </div>
 
         <div className="flex items-center gap-6">
-          <Link href="https://app.cushion.trade/vaults">
+          <Link href="https://app.cushion.trade/vaults/FTKm3WgS8K5AkDKL9UZnmD12JdhFnvxvNN1mF6adGXH9">
             <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 bg-[linear-gradient(90deg,#091BCD_0%,#123FFC_35%,#0B3FE8_64%,#4571F4_100%)]">
               Launch app
             </Button>
@@ -50,7 +50,7 @@ export default function Home() {
                 Cushion brings capital-protected strategies to DeFi, offering
                 high-return solutions with advanced risk management
               </p>
-              <Link href="https://app.cushion.trade/vaults">
+              <Link href="https://app.cushion.trade/vaults/FTKm3WgS8K5AkDKL9UZnmD12JdhFnvxvNN1mF6adGXH9">
                 <Button className="rounded-full px-8 py-3 text-sm w-full sm:w-auto bg-[linear-gradient(90deg,#091BCD_0%,#123FFC_35%,#0B3FE8_64%,#4571F4_100%)]">
                   Earn
                 </Button>
